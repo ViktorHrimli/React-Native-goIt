@@ -8,51 +8,74 @@ import {
   TextInput,
   TouchableOpacity,
   Platform,
+  Keyboard,
+  TouchableWithoutFeedback,
 } from "react-native";
 
 const RegistrationsScreen = () => {
   const [isShowKeyboard, setIsShowKeyboard] = useState(false);
 
   const handleFocuse = () => {
-    setIsShowKeyboard(true);
+    Keyboard.dismiss();
+    setIsShowKeyboard(false);
   };
   return (
-    <ImageBackground
-      source={require("../assets/img/PhotoBG.jpg")}
-      style={styles.img}
-    >
-      <View style={styles.conteinerImg}></View>
-      <View style={styles.conteiner}>
-        <Text style={styles.titleText}>Registration</Text>
-        <KeyboardAvoidingView
-          behavior={Platform.OS === "ios" ? "padding" : "height"}
-        >
-          <View style={styles.form}>
-            <View>
-              <TextInput
-                style={styles.input}
-                placeholder="Email or Phone"
-                onFocus={handleFocuse}
-              />
+    <TouchableWithoutFeedback onPress={handleFocuse}>
+      <ImageBackground
+        source={require("../assets/img/PhotoBG.jpg")}
+        style={styles.img}
+      >
+        <View
+          style={{ ...styles.conteinerImg, top: isShowKeyboard ? 30 : 220 }}
+        ></View>
+        <View style={{ ...styles.conteiner, flex: isShowKeyboard ? 0.8 : 0.6 }}>
+          <Text style={styles.titleText}>Registration</Text>
+          <KeyboardAvoidingView
+            behavior={Platform.OS === "ios" ? "padding" : "height"}
+          >
+            <View style={styles.form}>
+              <View>
+                <TextInput
+                  style={{
+                    ...styles.input,
+                    borderColor: isShowKeyboard ? "#FF6C00" : "#e8e8e8",
+                  }}
+                  placeholder="Name"
+                  onFocus={() => setIsShowKeyboard(true)}
+                />
+              </View>
+              <View>
+                <TextInput
+                  style={{
+                    ...styles.input,
+                    borderColor: isShowKeyboard ? "#FF6C00" : "#e8e8e8",
+                  }}
+                  placeholder="Email or Phone"
+                  onFocus={() => setIsShowKeyboard(true)}
+                />
+              </View>
+              <View>
+                <TextInput
+                  style={{
+                    ...styles.input,
+                    borderColor: isShowKeyboard ? "#FF6C00" : "#e8e8e8",
+                  }}
+                  placeholder="Password"
+                  secureTextEntry={true}
+                  onFocus={() => setIsShowKeyboard(true)}
+                />
+              </View>
+              <TouchableOpacity style={styles.button} onPress={handleFocuse}>
+                <Text style={styles.buttonText}>Send</Text>
+              </TouchableOpacity>
+              <View style={{ alignItems: "center", marginTop: 10 }}>
+                <Text style={{ color: "#1B4371", fontSize: 18 }}>Login?</Text>
+              </View>
             </View>
-            <View>
-              <TextInput
-                style={styles.input}
-                placeholder="Password"
-                secureTextEntry={true}
-                onFocus={handleFocuse}
-              />
-            </View>
-            <TouchableOpacity style={styles.button}>
-              <Text style={styles.buttonText}>Send</Text>
-            </TouchableOpacity>
-            <View style={{ alignItems: "center", marginTop: 10 }}>
-              <Text style={{ color: "#1B4371", fontSize: 18 }}>Login?</Text>
-            </View>
-          </View>
-        </KeyboardAvoidingView>
-      </View>
-    </ImageBackground>
+          </KeyboardAvoidingView>
+        </View>
+      </ImageBackground>
+    </TouchableWithoutFeedback>
   );
 };
 
@@ -65,14 +88,14 @@ const styles = StyleSheet.create({
     justifyContent: "flex-end",
   },
   conteiner: {
-    flex: 0.6,
+    flex: 0.7,
     flexDirection: "column",
     backgroundColor: "#fff",
     borderTopLeftRadius: 15,
     borderTopRightRadius: 15,
     paddingLeft: 16,
     paddingRight: 16,
-    paddingTop: 92,
+    paddingTop: 50,
   },
   conteinerImg: {
     position: "absolute",
@@ -87,6 +110,7 @@ const styles = StyleSheet.create({
   titleText: {
     fontSize: 30,
     lineHeight: 35,
+    textAlign: "center",
     color: "#212121",
   },
   form: {
@@ -108,7 +132,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     borderRadius: 100,
-    marginTop: 23,
+    marginTop: 15,
     padding: 16,
     backgroundColor: "#FF6C00",
   },
