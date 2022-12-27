@@ -99,7 +99,7 @@ const styles = StyleSheet.create({
   },
   conteinerImg: {
     position: "absolute",
-    top: 220,
+    top: Platform.OS === "ios" ? 200 : 220,
     left: "35%",
     width: 120,
     height: 120,
@@ -122,7 +122,8 @@ const styles = StyleSheet.create({
     backgroundColor: "#F6F6F6",
     borderColor: "#e8e8e8",
     color: "#212121",
-    padding: 10,
+    padding: Platform.OS === "ios" ? 14 : 10,
+    fontSize: Platform.OS === "ios" ? 16 : 14,
     marginBottom: 20,
     textAlign: "center",
     borderRadius: 8,
