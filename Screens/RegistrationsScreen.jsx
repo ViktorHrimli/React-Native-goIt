@@ -1,8 +1,7 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useEffect } from "react";
 import {
   ImageBackground,
   View,
-  StyleSheet,
   Text,
   KeyboardAvoidingView,
   TextInput,
@@ -10,12 +9,12 @@ import {
   Platform,
   Keyboard,
   TouchableWithoutFeedback,
+  Dimensions,
 } from "react-native";
 
-import { useFonts } from "expo-font";
-import * as SplashScreen from "expo-splash-screen";
+import { styles } from "./Reg.styled";
 
-SplashScreen.preventAutoHideAsync();
+import { useFonts } from "expo-font";
 
 const initialState = {
   name: "",
@@ -27,6 +26,14 @@ const RegistrationsScreen = () => {
   const [isShowKeyboard, setIsShowKeyboard] = useState(false);
   const [input, setInput] = useState(initialState);
 
+  const [fontsLoaded] = useFonts({
+    "Silvana-1": require("../assets/fonts/Sevillana-Regular.ttf"),
+  });
+
+  const [dimension, setDimension] = useState(
+    Dimensions.get("window").width - 20 * 2
+  );
+
   const handleFocuse = () => {
     Keyboard.dismiss();
     setIsShowKeyboard(false);
@@ -35,22 +42,25 @@ const RegistrationsScreen = () => {
     setInput(() => initialState);
   };
 
-  const [fontsLoaded] = useFonts({
-    Roboto: require("../assets/fonts/Roboto-BoldItalic.ttf"),
+  useEffect(() => {
+    const onChange = () => {
+      const width = Dimensions.get("window").width;
+      setDimension(width);
+    };
+    Dimensions.addEventListener("change", onChange);
   });
-
-  const onLayoutRootView = useCallback(async () => {
-    if (fontsLoaded) {
-      await SplashScreen.hideAsync();
-    }
-  }, [fontsLoaded]);
 
   if (!fontsLoaded) {
     return null;
   }
 
   return (
-    <TouchableWithoutFeedback onPress={handleFocuse}>
+    <TouchableWithoutFeedback
+      onPress={() => {
+        setIsShowKeyboard(false);
+        Keyboard.dismiss();
+      }}
+    >
       <ImageBackground
         source={require("../assets/img/PhotoBG.jpg")}
         style={styles.img}
@@ -58,15 +68,12 @@ const RegistrationsScreen = () => {
         <View
           style={{ ...styles.conteinerImg, top: isShowKeyboard ? 30 : 220 }}
         ></View>
-        <View
-          style={{ ...styles.conteiner, flex: isShowKeyboard ? 0.8 : 0.6 }}
-          onLayout={onLayoutRootView}
-        >
+        <View style={{ ...styles.conteiner, flex: isShowKeyboard ? 0.8 : 0.6 }}>
           <Text style={styles.titleText}>Registration</Text>
           <KeyboardAvoidingView
             behavior={Platform.OS === "ios" ? "padding" : "height"}
           >
-            <View style={styles.form}>
+            <View style={{ ...styles.form, width: dimension - 20 * 2 }}>
               <View>
                 <TextInput
                   style={{
@@ -114,7 +121,15 @@ const RegistrationsScreen = () => {
                 <Text style={styles.buttonText}>Send</Text>
               </TouchableOpacity>
               <View style={{ alignItems: "center", marginTop: 10 }}>
-                <Text style={{ color: "#1B4371", fontSize: 18 }}>Login?</Text>
+                <Text
+                  style={{
+                    color: "#1B4371",
+                    fontSize: 18,
+                    fontFamily: "Silvana-1",
+                  }}
+                >
+                  Login?
+                </Text>
               </View>
             </View>
           </KeyboardAvoidingView>
@@ -125,67 +140,3 @@ const RegistrationsScreen = () => {
 };
 
 export default RegistrationsScreen;
-
-const styles = StyleSheet.create({
-  img: {
-    flex: 1,
-    resizeMode: "cover",
-    justifyContent: "flex-end",
-    fontFamily: "Roboto",
-  },
-  conteiner: {
-    flex: 0.7,
-    flexDirection: "column",
-    backgroundColor: "#fff",
-    borderTopLeftRadius: 15,
-    borderTopRightRadius: 15,
-    paddingLeft: 16,
-    paddingRight: 16,
-    paddingTop: 50,
-  },
-  conteinerImg: {
-    position: "absolute",
-    top: Platform.OS === "ios" ? 200 : 220,
-    left: "35%",
-    width: 120,
-    height: 120,
-    zIndex: 1,
-    borderRadius: 16,
-    backgroundColor: "#F6F6F6",
-  },
-  titleText: {
-    fontFamily: "Roboto",
-    fontSize: 30,
-    lineHeight: 35,
-    textAlign: "center",
-    color: "#212121",
-  },
-  form: {
-    marginTop: 33,
-    marginBottom: 20,
-    marginHorizontal: 20,
-  },
-  input: {
-    backgroundColor: "#F6F6F6",
-    borderColor: "#e8e8e8",
-    color: "#212121",
-    padding: Platform.OS === "ios" ? 14 : 10,
-    fontSize: Platform.OS === "ios" ? 16 : 14,
-    marginBottom: 20,
-    textAlign: "center",
-    borderRadius: 8,
-    borderWidth: 1,
-  },
-  button: {
-    alignItems: "center",
-    justifyContent: "center",
-    borderRadius: 100,
-    marginTop: 15,
-    padding: 16,
-    backgroundColor: "#FF6C00",
-  },
-  buttonText: {
-    color: "#fff",
-    fontSize: 18,
-  },
-});
