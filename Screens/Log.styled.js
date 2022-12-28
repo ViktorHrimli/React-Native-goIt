@@ -3,30 +3,38 @@ import { StyleSheet } from "react-native";
 const styles = StyleSheet.create({
   image: {
     flex: 1,
+
     resizeMode: "cover",
     justifyContent: "flex-end",
   },
   conteiner: {
-    flex: 0.6,
     flexDirection: "column",
-    justifyContent: "flex-start",
+    alignItems: "center",
     backgroundColor: "#fff",
     borderTopLeftRadius: 15,
     borderTopRightRadius: 15,
-    padding: 16,
   },
   title: {
     fontSize: 32,
     lineHeight: 35,
     fontFamily: "Silvana-1",
     textAlign: "center",
+    marginTop: 50,
     letterSpacing: 0.01,
     color: "#212121",
+  },
+  conteinerImg: {
+    position: "absolute",
+    left: "35%",
+    width: 120,
+    height: 120,
+    zIndex: 1,
+    borderRadius: 16,
+    backgroundColor: "#F6F6F6",
   },
   form: {
     marginTop: 33,
     marginBottom: 20,
-    marginHorizontal: 20,
   },
   input: {
     backgroundColor: "#F6F6F6",

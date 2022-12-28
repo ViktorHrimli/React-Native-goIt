@@ -11,15 +11,14 @@ import {
   TouchableWithoutFeedback,
   Dimensions,
 } from "react-native";
-
 import { useFonts } from "expo-font";
+
+import { styles } from "./Log.styled";
 
 const initialState = {
   email: "",
   password: "",
 };
-
-import { styles } from "./Log.styled";
 
 const Login = () => {
   const [isShowKeyboard, setIsShowKeyboard] = useState(false);
@@ -64,6 +63,9 @@ const Login = () => {
         source={require("../assets/img/PhotoBG.jpg")}
         style={styles.image}
       >
+        <View
+          style={{ ...styles.conteinerImg, top: isShowKeyboard ? 70 : 240 }}
+        ></View>
         <View style={{ ...styles.conteiner, flex: isShowKeyboard ? 0.7 : 0.6 }}>
           <Text style={styles.title}>Login</Text>
           <KeyboardAvoidingView
@@ -74,6 +76,7 @@ const Login = () => {
                 <TextInput
                   style={styles.input}
                   placeholder="Email or Phone"
+                  value={input.email}
                   onChangeText={(value) =>
                     setInput((prev) => ({ ...prev, email: value }))
                   }
@@ -84,6 +87,7 @@ const Login = () => {
                 <TextInput
                   style={styles.input}
                   placeholder="Password"
+                  value={input.password}
                   secureTextEntry={true}
                   onChangeText={(value) =>
                     setInput((prev) => ({ ...prev, password: value }))

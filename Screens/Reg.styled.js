@@ -7,7 +7,6 @@ const styles = StyleSheet.create({
     justifyContent: "flex-end",
   },
   conteiner: {
-    flex: 0.7,
     flexDirection: "column",
     backgroundColor: "#fff",
     borderTopLeftRadius: 15,
@@ -19,7 +18,6 @@ const styles = StyleSheet.create({
   },
   conteinerImg: {
     position: "absolute",
-    top: Platform.OS === "ios" ? 200 : 220,
     left: "35%",
     width: 120,
     height: 120,
