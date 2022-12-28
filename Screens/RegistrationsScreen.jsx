@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import {
   ImageBackground,
   View,
@@ -12,13 +12,43 @@ import {
   TouchableWithoutFeedback,
 } from "react-native";
 
+import { useFonts } from "expo-font";
+import * as SplashScreen from "expo-splash-screen";
+
+SplashScreen.preventAutoHideAsync();
+
+const initialState = {
+  name: "",
+  email: "",
+  password: "",
+};
+
 const RegistrationsScreen = () => {
   const [isShowKeyboard, setIsShowKeyboard] = useState(false);
+  const [input, setInput] = useState(initialState);
 
   const handleFocuse = () => {
     Keyboard.dismiss();
     setIsShowKeyboard(false);
+
+    console.log(input);
+    setInput(() => initialState);
   };
+
+  const [fontsLoaded] = useFonts({
+    Roboto: require("../assets/fonts/Roboto-BoldItalic.ttf"),
+  });
+
+  const onLayoutRootView = useCallback(async () => {
+    if (fontsLoaded) {
+      await SplashScreen.hideAsync();
+    }
+  }, [fontsLoaded]);
+
+  if (!fontsLoaded) {
+    return null;
+  }
+
   return (
     <TouchableWithoutFeedback onPress={handleFocuse}>
       <ImageBackground
@@ -28,7 +58,10 @@ const RegistrationsScreen = () => {
         <View
           style={{ ...styles.conteinerImg, top: isShowKeyboard ? 30 : 220 }}
         ></View>
-        <View style={{ ...styles.conteiner, flex: isShowKeyboard ? 0.8 : 0.6 }}>
+        <View
+          style={{ ...styles.conteiner, flex: isShowKeyboard ? 0.8 : 0.6 }}
+          onLayout={onLayoutRootView}
+        >
           <Text style={styles.titleText}>Registration</Text>
           <KeyboardAvoidingView
             behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -42,6 +75,10 @@ const RegistrationsScreen = () => {
                   }}
                   placeholder="Name"
                   onFocus={() => setIsShowKeyboard(true)}
+                  value={input.name}
+                  onChangeText={(value) =>
+                    setInput((prev) => ({ ...prev, name: value }))
+                  }
                 />
               </View>
               <View>
@@ -52,6 +89,10 @@ const RegistrationsScreen = () => {
                   }}
                   placeholder="Email or Phone"
                   onFocus={() => setIsShowKeyboard(true)}
+                  value={input.email}
+                  onChangeText={(value) =>
+                    setInput((prev) => ({ ...prev, email: value }))
+                  }
                 />
               </View>
               <View>
@@ -62,7 +103,11 @@ const RegistrationsScreen = () => {
                   }}
                   placeholder="Password"
                   secureTextEntry={true}
+                  value={input.password}
                   onFocus={() => setIsShowKeyboard(true)}
+                  onChangeText={(value) =>
+                    setInput((prev) => ({ ...prev, password: value }))
+                  }
                 />
               </View>
               <TouchableOpacity style={styles.button} onPress={handleFocuse}>
@@ -86,6 +131,7 @@ const styles = StyleSheet.create({
     flex: 1,
     resizeMode: "cover",
     justifyContent: "flex-end",
+    fontFamily: "Roboto",
   },
   conteiner: {
     flex: 0.7,
@@ -108,6 +154,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#F6F6F6",
   },
   titleText: {
+    fontFamily: "Roboto",
     fontSize: 30,
     lineHeight: 35,
     textAlign: "center",
