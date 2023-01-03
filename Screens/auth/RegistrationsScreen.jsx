@@ -10,11 +10,10 @@ import {
   Keyboard,
   TouchableWithoutFeedback,
   Dimensions,
+  Button,
 } from "react-native";
 
 import { styles } from "./Reg.styled";
-
-import { useFonts } from "expo-font";
 
 const initialState = {
   name: "",
@@ -22,13 +21,9 @@ const initialState = {
   password: "",
 };
 
-const RegistrationsScreen = () => {
+const RegistrationsScreen = ({ navigation }) => {
   const [isShowKeyboard, setIsShowKeyboard] = useState(false);
   const [input, setInput] = useState(initialState);
-
-  const [fontsLoaded] = useFonts({
-    "Silvana-1": require("../assets/fonts/Sevillana-Regular.ttf"),
-  });
 
   const [dimension, setDimension] = useState(
     Dimensions.get("window").width - 20 * 2
@@ -50,13 +45,9 @@ const RegistrationsScreen = () => {
     Dimensions.addEventListener("change", onChange);
   });
 
-  if (!fontsLoaded) {
-    return null;
-  }
-
   return (
     <TouchableWithoutFeedback
-      onPress={() => {
+      onPress={(e) => {
         setIsShowKeyboard(false);
         Keyboard.dismiss();
       }}
@@ -121,15 +112,17 @@ const RegistrationsScreen = () => {
                 <Text style={styles.buttonText}>Send</Text>
               </TouchableOpacity>
               <View style={{ alignItems: "center", marginTop: 10 }}>
-                <Text
-                  style={{
-                    color: "#1B4371",
-                    fontSize: 18,
-                    fontFamily: "Silvana-1",
-                  }}
-                >
-                  Login?
-                </Text>
+                <TouchableOpacity onPress={() => navigation.navigate("Login")}>
+                  <Text
+                    style={{
+                      color: "#1B4371",
+                      fontSize: 18,
+                      fontFamily: "Silvana-1",
+                    }}
+                  >
+                    Sign In?
+                  </Text>
+                </TouchableOpacity>
               </View>
             </View>
           </KeyboardAvoidingView>

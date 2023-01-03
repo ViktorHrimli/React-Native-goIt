@@ -1,22 +1,43 @@
 import React from "react";
 import { StatusBar } from "expo-status-bar";
-import { StyleSheet, Text, View } from "react-native";
-import Login from "./Screens/LoginScreen";
-import RegistrationsScreen from "./Screens/RegistrationsScreen";
+
+import { createStackNavigator } from "@react-navigation/stack";
+import { NavigationContainer } from "@react-navigation/native";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { useFonts } from "expo-font";
+
+//
+import LoginScreen from "./Screens/auth/LoginScreen";
+import RegistrationsScreen from "./Screens/auth/RegistrationsScreen";
+
+const Stack = createStackNavigator();
+const MainTabs = createBottomTabNavigator();
+
 export default function App() {
+  const [fontsLoaded] = useFonts({
+    "Silvana-1": require("./assets/fonts/Roboto-Medium.ttf"),
+  });
+
+  if (!fontsLoaded) {
+    return null;
+  }
   return (
-    <React.StrictMode>
-      <View style={styles.container}>
-        {/* <Login /> */}
-        <RegistrationsScreen />
-        <StatusBar style="auto" />
-      </View>
-    </React.StrictMode>
+    <>
+      <NavigationContainer>
+        <Stack.Navigator>
+          <Stack.Screen
+            name="Login"
+            component={LoginScreen}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="Register"
+            component={RegistrationsScreen}
+            options={{ headerShown: false }}
+          />
+        </Stack.Navigator>
+      </NavigationContainer>
+      <StatusBar style="auto" />
+    </>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-});

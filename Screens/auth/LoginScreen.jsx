@@ -10,8 +10,8 @@ import {
   Keyboard,
   TouchableWithoutFeedback,
   Dimensions,
+  Button,
 } from "react-native";
-import { useFonts } from "expo-font";
 
 import { styles } from "./Log.styled";
 
@@ -20,13 +20,9 @@ const initialState = {
   password: "",
 };
 
-const Login = () => {
+const LoginScreen = ({ navigation }) => {
   const [isShowKeyboard, setIsShowKeyboard] = useState(false);
   const [input, setInput] = useState(initialState);
-
-  const [fontsLoaded] = useFonts({
-    "Silvana-1": require("../assets/fonts/Sevillana-Regular.ttf"),
-  });
 
   const [dimension, setDimension] = useState(
     Dimensions.get("window").width - 20 * 2
@@ -47,10 +43,6 @@ const Login = () => {
     };
     Dimensions.addEventListener("change", onChange);
   });
-
-  if (!fontsLoaded) {
-    return null;
-  }
 
   return (
     <TouchableWithoutFeedback
@@ -99,7 +91,19 @@ const Login = () => {
                 <Text style={styles.buttonText}>Send</Text>
               </TouchableOpacity>
               <View style={{ alignItems: "center", marginTop: 10 }}>
-                <Text style={{ color: "#1B4371", fontSize: 18 }}>Sign Up?</Text>
+                <TouchableOpacity
+                  onPress={() => navigation.navigate("Register")}
+                >
+                  <Text
+                    style={{
+                      color: "#2a345f",
+                      fontSize: 18,
+                      fontFamily: "Silvana-1",
+                    }}
+                  >
+                    Sign Up?
+                  </Text>
+                </TouchableOpacity>
               </View>
             </View>
           </KeyboardAvoidingView>
@@ -109,4 +113,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default LoginScreen;
