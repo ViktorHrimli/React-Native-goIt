@@ -5,11 +5,13 @@ import Login from "./Screens/LoginScreen";
 import RegistrationsScreen from "./Screens/RegistrationsScreen";
 export default function App() {
   return (
-    <View style={styles.container}>
-      {/* <Login /> */}
-      <RegistrationsScreen />
-      <StatusBar style="auto" />
-    </View>
+    <React.StrictMode>
+      <View style={styles.container}>
+        {/* <Login /> */}
+        <RegistrationsScreen />
+        <StatusBar style="auto" />
+      </View>
+    </React.StrictMode>
   );
 }
 
