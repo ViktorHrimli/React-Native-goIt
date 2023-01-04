@@ -10,7 +10,6 @@ import {
   Keyboard,
   TouchableWithoutFeedback,
   Dimensions,
-  Button,
 } from "react-native";
 
 import { styles } from "./Log.styled";
@@ -52,7 +51,7 @@ const LoginScreen = ({ navigation }) => {
       }}
     >
       <ImageBackground
-        source={require("../assets/img/PhotoBG.jpg")}
+        source={require("../../assets/img/PhotoBG.jpg")}
         style={styles.image}
       >
         <View

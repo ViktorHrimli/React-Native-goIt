@@ -10,7 +10,6 @@ import {
   Keyboard,
   TouchableWithoutFeedback,
   Dimensions,
-  Button,
 } from "react-native";
 
 import { styles } from "./Reg.styled";
@@ -53,7 +52,7 @@ const RegistrationsScreen = ({ navigation }) => {
       }}
     >
       <ImageBackground
-        source={require("../assets/img/PhotoBG.jpg")}
+        source={require("../../assets/img/PhotoBG.jpg")}
         style={styles.img}
       >
         <View
