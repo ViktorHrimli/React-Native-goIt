@@ -1,19 +1,19 @@
 import React from "react";
-import { Text, View, StyleSheet } from "react-native";
+import { Text, View, StyleSheet, ImageBackground } from "react-native";
 
 const ProfileScreen = () => {
   return (
-    <View style={styles.conteiner}>
-      <Text>ProfileScreen</Text>
-    </View>
+    <ImageBackground
+      source={require("../../assets/img/PhotoBG.jpg")}
+      style={styles.img}
+    ></ImageBackground>
   );
 };
 
 export default ProfileScreen;
 
 const styles = StyleSheet.create({
-  conteiner: {
+  img: {
     flex: 1,
-    alignItems: "flex-start",
   },
 });

@@ -33,6 +33,7 @@ const LoginScreen = ({ navigation }) => {
 
     console.log(input);
     setInput(() => initialState);
+    // navigation.jumpTo("Home");
   };
 
   useEffect(() => {

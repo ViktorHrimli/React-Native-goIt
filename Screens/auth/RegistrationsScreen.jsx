@@ -34,6 +34,8 @@ const RegistrationsScreen = ({ navigation }) => {
 
     console.log(input);
     setInput(() => initialState);
+
+    // navigation.jumpTo("Home");
   };
 
   useEffect(() => {
