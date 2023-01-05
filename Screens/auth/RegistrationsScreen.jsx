@@ -11,22 +11,18 @@ import {
   TouchableWithoutFeedback,
   Dimensions,
 } from "react-native";
-import { useFonts } from "expo-font";
 
-import { styles } from "./Log.styled";
+import { styles } from "./Reg.styled";
 
 const initialState = {
+  name: "",
   email: "",
   password: "",
 };
 
-const Login = () => {
+const RegistrationsScreen = ({ navigation }) => {
   const [isShowKeyboard, setIsShowKeyboard] = useState(false);
   const [input, setInput] = useState(initialState);
-
-  const [fontsLoaded] = useFonts({
-    "Silvana-1": require("../assets/fonts/Sevillana-Regular.ttf"),
-  });
 
   const [dimension, setDimension] = useState(
     Dimensions.get("window").width - 20 * 2
@@ -38,6 +34,8 @@ const Login = () => {
 
     console.log(input);
     setInput(() => initialState);
+
+    // navigation.jumpTo("Home");
   };
 
   useEffect(() => {
@@ -48,58 +46,84 @@ const Login = () => {
     Dimensions.addEventListener("change", onChange);
   });
 
-  if (!fontsLoaded) {
-    return null;
-  }
-
   return (
     <TouchableWithoutFeedback
-      onPress={() => {
+      onPress={(e) => {
         setIsShowKeyboard(false);
         Keyboard.dismiss();
       }}
     >
       <ImageBackground
-        source={require("../assets/img/PhotoBG.jpg")}
-        style={styles.image}
+        source={require("../../assets/img/PhotoBG.jpg")}
+        style={styles.img}
       >
         <View
-          style={{ ...styles.conteinerImg, top: isShowKeyboard ? 70 : 240 }}
+          style={{ ...styles.conteinerImg, top: isShowKeyboard ? 30 : 220 }}
         ></View>
-        <View style={{ ...styles.conteiner, flex: isShowKeyboard ? 0.7 : 0.6 }}>
-          <Text style={styles.title}>Login</Text>
+        <View style={{ ...styles.conteiner, flex: isShowKeyboard ? 0.8 : 0.6 }}>
+          <Text style={styles.titleText}>Registration</Text>
           <KeyboardAvoidingView
             behavior={Platform.OS === "ios" ? "padding" : "height"}
           >
             <View style={{ ...styles.form, width: dimension - 20 * 2 }}>
               <View>
                 <TextInput
-                  style={styles.input}
-                  placeholder="Email or Phone"
-                  value={input.email}
-                  onChangeText={(value) =>
-                    setInput((prev) => ({ ...prev, email: value }))
-                  }
+                  style={{
+                    ...styles.input,
+                    borderColor: isShowKeyboard ? "#FF6C00" : "#e8e8e8",
+                  }}
+                  placeholder="Name"
                   onFocus={() => setIsShowKeyboard(true)}
+                  value={input.name}
+                  onChangeText={(value) =>
+                    setInput((prev) => ({ ...prev, name: value }))
+                  }
                 />
               </View>
               <View>
                 <TextInput
-                  style={styles.input}
+                  style={{
+                    ...styles.input,
+                    borderColor: isShowKeyboard ? "#FF6C00" : "#e8e8e8",
+                  }}
+                  placeholder="Email or Phone"
+                  onFocus={() => setIsShowKeyboard(true)}
+                  value={input.email}
+                  onChangeText={(value) =>
+                    setInput((prev) => ({ ...prev, email: value }))
+                  }
+                />
+              </View>
+              <View>
+                <TextInput
+                  style={{
+                    ...styles.input,
+                    borderColor: isShowKeyboard ? "#FF6C00" : "#e8e8e8",
+                  }}
                   placeholder="Password"
-                  value={input.password}
                   secureTextEntry={true}
+                  value={input.password}
+                  onFocus={() => setIsShowKeyboard(true)}
                   onChangeText={(value) =>
                     setInput((prev) => ({ ...prev, password: value }))
                   }
-                  onFocus={() => setIsShowKeyboard(true)}
                 />
               </View>
               <TouchableOpacity style={styles.button} onPress={handleFocuse}>
                 <Text style={styles.buttonText}>Send</Text>
               </TouchableOpacity>
               <View style={{ alignItems: "center", marginTop: 10 }}>
-                <Text style={{ color: "#1B4371", fontSize: 18 }}>Sign Up?</Text>
+                <TouchableOpacity onPress={() => navigation.navigate("Login")}>
+                  <Text
+                    style={{
+                      color: "#1B4371",
+                      fontSize: 18,
+                      fontFamily: "Silvana-1",
+                    }}
+                  >
+                    Sign In?
+                  </Text>
+                </TouchableOpacity>
               </View>
             </View>
           </KeyboardAvoidingView>
@@ -109,4 +133,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default RegistrationsScreen;
