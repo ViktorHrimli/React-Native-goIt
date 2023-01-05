@@ -1,9 +1,18 @@
-import React from "react";
-import { MaterialIcons } from "@expo/vector-icons";
+import React, { useState } from "react";
+import { Feather } from "@expo/vector-icons";
 
-import { Text, View, StyleSheet, Image, TouchableOpacity } from "react-native";
+import {
+  Text,
+  View,
+  StyleSheet,
+  Image,
+  TouchableOpacity,
+  ImageBackground,
+  Dimensions,
+} from "react-native";
 
-const HomeScreen = () => {
+const HomeScreen = ({ navigation }) => {
+  const [width, setwidth] = useState(Dimensions.get("screen").width - 32);
   return (
     <View style={styles.conteiner}>
       <View style={styles.profile_conteiner}>
@@ -16,6 +25,36 @@ const HomeScreen = () => {
           <Text style={styles.email}>ViktorHrimli@gmail.com</Text>
         </View>
       </View>
+      <ImageBackground
+        style={{ ...styles.conteiner_img, width }}
+        borderRadius={8}
+        source={require("../../assets/img/wood.jpg")}
+      ></ImageBackground>
+      <Text style={styles.text_title}>Wood</Text>
+      <View
+        style={{
+          flexDirection: "row",
+          alignItems: "flex-end",
+          marginTop: 8,
+        }}
+      >
+        <View style={styles.comment_conteiner}>
+          <Feather
+            name="message-circle"
+            size={21}
+            color="#BDBDBD"
+            style={{ marginRight: 7 }}
+            onPress={() => navigation.navigate("Comment")}
+          />
+          <Text style={styles.count_comment}>0</Text>
+        </View>
+        <View style={styles.location_conteiner}>
+          <Feather style={{}} name="map-pin" size={18} color="#BDBDBD" />
+          <Text style={{ marginLeft: 8, color: "#212121", fontSize: 16 }}>
+            Ivano-Frankivs'k Region, Ukraine
+          </Text>
+        </View>
+      </View>
     </View>
   );
 };
@@ -26,17 +65,15 @@ const styles = StyleSheet.create({
   conteiner: {
     flex: 1,
     flexDirection: "column",
-    justifyContent: "flex-start",
     alignItems: "center",
     backgroundColor: "#fff",
+    paddingHorizontal: 16,
     paddingTop: 32,
   },
   profile_conteiner: {
     flexDirection: "row",
     alignItems: "center",
-    marginHorizontal: 16,
     marginRight: "auto",
-    marginLeft: 25,
     marginBottom: 32,
   },
   image: {
@@ -55,32 +92,28 @@ const styles = StyleSheet.create({
     fontSize: 13,
     lineHeight: 15,
   },
-  conteiner_skeleton: {
-    flexDirection: "column",
-    alignItems: "center",
-    justifyContent: "center",
+  conteiner_img: {
     marginBottom: 8,
     width: 343,
     height: 250,
-    backgroundColor: "#F6F6F6",
-    borderColor: "#E8E8E8",
-    borderWidth: 1,
-    borderRadius: 8,
   },
-  conteiner_addPhoto: {
-    alignItems: "center",
-    justifyContent: "center",
-    width: 60,
-    height: 60,
-    borderRadius: 50,
-    backgroundColor: "#Fff",
-  },
-  text_addPhotot: {
+  text_title: {
     fontFamily: "Silvana-1",
     fontSize: 16,
     lineHeight: 19,
-    color: "#BDBDBD",
+    color: "#212121",
     marginRight: "auto",
-    marginLeft: 24,
+  },
+  comment_conteiner: {
+    flexDirection: "row",
+  },
+  count_comment: {
+    fontSize: 15,
+    color: "#BDBDBD",
+  },
+  location_conteiner: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginLeft: 65,
   },
 });

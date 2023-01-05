@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { MaterialIcons } from "@expo/vector-icons";
 import { FontAwesome } from "@expo/vector-icons";
-import { Ionicons } from "@expo/vector-icons";
+import { Feather } from "@expo/vector-icons";
+
 import {
   Text,
   View,
@@ -16,7 +17,7 @@ const initialState = {
   location: "",
 };
 
-const PostsScreen = ({ navigations }) => {
+const PostsScreen = ({ navigation }) => {
   const [input, setInput] = useState(initialState);
   const [isShowKeyboard, setIsShowKeyboard] = useState(false);
 
@@ -59,9 +60,9 @@ const PostsScreen = ({ navigations }) => {
           />
         </View>
         <View style={{ position: "relative" }}>
-          <Ionicons
+          <Feather
             style={{ position: "absolute", top: 15, left: 0 }}
-            name="ios-location-outline"
+            name="map-pin"
             size={18}
             color="#BDBDBD"
           />

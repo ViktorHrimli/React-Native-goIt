@@ -44,6 +44,8 @@ const useRouting = (isAuth) => {
         headerTitleAlign: "center",
         tabBarShowLabel: false,
         tabBarActiveBackgroundColor: "#FF6C00",
+        tabBarInactiveTintColor: "#000",
+        tabBarActiveTintColor: "#fff",
         tabBarHideOnKeyboard: true,
       }}
     >
@@ -67,7 +69,7 @@ const useRouting = (isAuth) => {
           title: "Publications",
           headerRightContainerStyle: true,
           tabBarIcon: (focused, size, color) => {
-            return <AntDesign name="appstore-o" size={24} color="black" />;
+            return <AntDesign name="appstore-o" size={24} color={color} />;
           },
         }}
       />
@@ -104,6 +106,15 @@ const useRouting = (isAuth) => {
               <Ionicons name="md-person-outline" size={24} color="black" />
             );
           },
+        }}
+      />
+      <MainTabs.Screen
+        name="Comment"
+        component={CommentsScreen}
+        options={{
+          header: () => {},
+          tabBarIcon: () => {},
+          tabBarButton: () => {},
         }}
       />
     </MainTabs.Navigator>
