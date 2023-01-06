@@ -130,6 +130,28 @@ const useRouting = (isAuth) => {
           tabBarButton: () => {},
         }}
       />
+      <MainTabs.Screen
+        name="Map"
+        component={MapScreen}
+        options={{
+          title: "Map Screen",
+          headerLeft: () => (
+            <View
+              style={{
+                paddingLeft: 20,
+              }}
+            >
+              <TouchableOpacity
+                onPress={() => console.log("Return me back pls")}
+              >
+                <Ionicons name="arrow-back-outline" size={24} color="black" />
+              </TouchableOpacity>
+            </View>
+          ),
+          tabBarIcon: () => {},
+          tabBarButton: () => {},
+        }}
+      />
     </MainTabs.Navigator>
   );
 };

@@ -2,11 +2,7 @@ import React from "react";
 import { Text, View, StyleSheet } from "react-native";
 
 const MapScreen = () => {
-  return (
-    <View style={styles.conteiner}>
-      <Text>MapScreen</Text>
-    </View>
-  );
+  return <View style={styles.conteiner}></View>;
 };
 
 export default MapScreen;
