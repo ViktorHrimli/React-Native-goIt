@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { MaterialIcons } from "@expo/vector-icons";
 import { FontAwesome } from "@expo/vector-icons";
 import { Feather } from "@expo/vector-icons";
@@ -9,14 +9,15 @@ import * as MediaLibrary from "expo-media-library";
 import {
   Text,
   View,
+  Image,
   StyleSheet,
   Dimensions,
   TextInput,
   TouchableOpacity,
   SafeAreaView,
   ScrollView,
+  ImageBackground,
 } from "react-native";
-import { async } from "q";
 
 const initialState = {
   title: "",
@@ -28,19 +29,24 @@ const PostsScreen = ({ navigation }) => {
   const [isShowKeyboard, setIsShowKeyboard] = useState(false);
   const [type, setType] = useState(CameraType.front);
   const [snap, setSnap] = useState(null);
+  const [photo, setphoto] = useState(null);
+  const [dimension, setDimension] = useState(
+    Dimensions.get("window").width - 20 * 2
+  );
 
-  const takeSnap = async () => console.log(snap);
+  const cameraRef = useRef(null);
 
-  const [premissions, requestPermission] = Camera.useCameraPermissions();
+  const takeSnap = async () => {
+    const photo = await cameraRef.current.takePictureAsync();
+    setphoto(photo.uri);
+  };
+
+  const [permission, requestPermission] = Camera.useCameraPermissions();
 
   const toggleCamera = () =>
     setType((prev) =>
       prev === CameraType.back ? CameraType.front : CameraType.back
     );
-
-  const [dimension, setDimension] = useState(
-    Dimensions.get("window").width - 20 * 2
-  );
 
   const onHandleSubmit = () => {
     setInput(initialState);
@@ -55,14 +61,43 @@ const PostsScreen = ({ navigation }) => {
     Dimensions.addEventListener("change", onChange);
   });
 
+  if (!permission) {
+    return <View />;
+  }
+
+  if (!permission.granted) {
+    return (
+      <View style={{ flex: 1, justifyContent: "center" }}>
+        <Text style={{ textAlign: "center" }}>
+          We need your permission to show the camera
+        </Text>
+        <Button onPress={requestPermission} title="grant permission" />
+      </View>
+    );
+  }
+
   return (
     <ScrollView>
       <View style={styles.conteiner}>
-        <Camera style={{ borderRadius: 8 }} type={type} ref={setSnap}>
+        <Camera style={{ borderRadius: 8 }} type={type} ref={cameraRef}>
           <View style={styles.conteiner_skeleton}>
+            {photo && (
+              <View
+                style={{
+                  position: "absolute",
+                  top: 10,
+                  left: 10,
+                }}
+              >
+                <Image
+                  source={{ uri: photo }}
+                  style={{ width: 100, height: 100 }}
+                />
+              </View>
+            )}
             <TouchableOpacity
               onPress={takeSnap}
-              delayLongPress={300}
+              delayLongPress={500}
               onLongPress={toggleCamera}
             >
               <View style={styles.conteiner_addPhoto}>
