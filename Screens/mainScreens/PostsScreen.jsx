@@ -10,6 +10,8 @@ import {
   Dimensions,
   TextInput,
   TouchableOpacity,
+  SafeAreaView,
+  ScrollView,
 } from "react-native";
 
 const initialState = {
