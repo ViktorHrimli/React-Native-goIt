@@ -1,96 +1,126 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
+import { Camera, CameraType } from "expo-camera";
 import { MaterialIcons } from "@expo/vector-icons";
-import { FontAwesome } from "@expo/vector-icons";
-import { Feather } from "@expo/vector-icons";
+import { Ionicons } from "@expo/vector-icons";
+
+import * as Location from "expo-location";
 
 import {
   Text,
   View,
   StyleSheet,
-  Dimensions,
-  TextInput,
   TouchableOpacity,
-  SafeAreaView,
+  Dimensions,
   ScrollView,
+  SafeAreaView,
 } from "react-native";
 
-const initialState = {
-  title: "",
-  location: "",
-};
+import FormPost from "../../components/FormPost/FormPost";
 
 const PostsScreen = ({ navigation }) => {
-  const [input, setInput] = useState(initialState);
-  const [isShowKeyboard, setIsShowKeyboard] = useState(false);
+  const [location, setLocation] = useState(null);
+  const [errorMsg, setErrorMsg] = useState(null);
+  const [hasPermission, setHasPermission] = useState(null);
+  const [type, setType] = useState(CameraType.back);
+  const [photo, setphoto] = useState(null);
+  const [cameraReady, setCameraReady] = useState(false);
+  const [isPreview, setIsPreview] = useState(false);
 
-  const [dimension, setDimension] = useState(
-    Dimensions.get("window").width - 20 * 2
-  );
-
-  const onHandleSubmit = () => {
-    setInput(initialState);
-  };
+  const cameraRef = useRef(null);
 
   useEffect(() => {
-    const onChange = () => {
-      const width = Dimensions.get("window").width;
-      setDimension(width);
-    };
-    Dimensions.addEventListener("change", onChange);
-  });
+    (async () => {
+      const { status } = await Camera.requestCameraPermissionsAsync();
+      setHasPermission(status === "granted");
+    })();
+  }, []);
+
+  useEffect(() => {
+    (async () => {
+      let { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== "granted") {
+        setErrorMsg("Permission to access location was denied");
+        return;
+      }
+    })();
+  }, []);
+
+  const onCameraReady = () => {
+    setCameraReady(true);
+  };
+
+  const takeSnap = async () => {
+    if (cameraRef.current) {
+      const data = await cameraRef.current.takePictureAsync();
+      let location = await Location.getCurrentPositionAsync({});
+      const source = data.uri;
+      setLocation(location);
+      setphoto(source);
+
+      if (source) {
+        await cameraRef.current.pausePreview();
+        setIsPreview(true);
+      }
+    }
+  };
+
+  const cancelPreview = async () => {
+    await cameraRef.current.resumePreview();
+    setIsPreview(false);
+  };
+
+  const toggleCamera = () =>
+    setType((prev) =>
+      prev === CameraType.back ? CameraType.front : CameraType.back
+    );
+
+  if (hasPermission === null) {
+    return <View />;
+  }
+  if (hasPermission === false) {
+    return <Text style={styles.text}>No access to camera</Text>;
+  }
 
   return (
-    <View style={styles.conteiner}>
-      <TouchableOpacity onPress={() => console.log("add photo")}>
-        <View style={styles.conteiner_skeleton}>
-          <View style={styles.conteiner_addPhoto}>
-            <MaterialIcons name="photo-camera" size={24} color="#BDBDBD" />
-          </View>
-        </View>
-      </TouchableOpacity>
-      <Text style={styles.text_addPhotot}>Upload photo</Text>
-      <View style={{ ...styles.form, width: dimension - 20 * 2 }}>
-        <View>
-          <TextInput
-            style={styles.input}
-            placeholder="Title..."
-            onFocus={() => setIsShowKeyboard(true)}
-            value={input.name}
-            onChangeText={(value) =>
-              setInput((prev) => ({ ...prev, title: value }))
-            }
-          />
-        </View>
-        <View style={{ position: "relative" }}>
-          <Feather
-            style={{ position: "absolute", top: 15, left: 0 }}
-            name="map-pin"
-            size={18}
-            color="#BDBDBD"
-          />
-          <TextInput
-            style={{ ...styles.input, paddingLeft: 24 }}
-            placeholder="Location"
-            onFocus={() => setIsShowKeyboard(true)}
-            value={input.email}
-            onChangeText={(value) =>
-              setInput((prev) => ({ ...prev, location: value }))
-            }
-          ></TextInput>
-        </View>
+    <ScrollView>
+      <SafeAreaView style={styles.conteiner}>
+        <Camera
+          ref={cameraRef}
+          type={type}
+          style={styles.conteiner_skeleton}
+          flashMode={Camera.Constants.FlashMode.on}
+          onCameraReady={onCameraReady}
+          onMountError={(error) => {
+            console.log("camera error", error);
+          }}
+        >
+          <TouchableOpacity
+            onPress={takeSnap}
+            delayLongPress={500}
+            onLongPress={toggleCamera}
+            disabled={!cameraReady}
+          >
+            {!isPreview && (
+              <View style={styles.conteiner_addPhoto}>
+                <MaterialIcons name="photo-camera" size={24} color="#fff" />
+              </View>
+            )}
+            {isPreview && (
+              <Ionicons
+                onPress={cancelPreview}
+                name="close-circle-sharp"
+                size={44}
+                style={{ opacity: 0.5 }}
+                color="black"
+              />
+            )}
+          </TouchableOpacity>
+        </Camera>
 
-        <TouchableOpacity style={styles.button} onPress={onHandleSubmit}>
-          <Text style={styles.buttonText}>Publish</Text>
-        </TouchableOpacity>
-      </View>
-
-      <TouchableOpacity
-        style={styles.clear_conteiner}
-        onPress={() => console.log("clearMe")}
-      >
-        <FontAwesome name="trash-o" size={24} color="#BDBDBD" />
-      </TouchableOpacity>
-    </View>
+        <Text style={styles.text_addPhotot}>Upload photo</Text>
+        <FormPost navigation={navigation} photo={photo} location={location} />
+      </SafeAreaView>
+    </ScrollView>
   );
 };
 
@@ -104,17 +134,23 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     paddingTop: 32,
   },
+  text_addPhotot: {
+    fontFamily: "Silvana-1",
+    fontSize: 16,
+    lineHeight: 19,
+    color: "#BDBDBD",
+    marginTop: 8,
+
+    marginRight: "auto",
+    marginLeft: 24,
+  },
   conteiner_skeleton: {
     flexDirection: "column",
     alignItems: "center",
     justifyContent: "center",
-    marginBottom: 8,
+    borderRadius: 8,
     width: 343,
     height: 250,
-    backgroundColor: "#F6F6F6",
-    borderColor: "#E8E8E8",
-    borderWidth: 1,
-    borderRadius: 8,
   },
   conteiner_addPhoto: {
     alignItems: "center",
@@ -122,54 +158,16 @@ const styles = StyleSheet.create({
     width: 60,
     height: 60,
     borderRadius: 50,
-    backgroundColor: "#Fff",
+    backgroundColor: "rgba(255, 255, 255, 0.3)",
   },
   text_addPhotot: {
     fontFamily: "Silvana-1",
     fontSize: 16,
     lineHeight: 19,
     color: "#BDBDBD",
+    marginTop: 8,
+
     marginRight: "auto",
     marginLeft: 24,
-  },
-  form: {
-    marginHorizontal: 16,
-    flexDirection: "column",
-    marginTop: 48,
-  },
-  input: {
-    fontFamily: "Silvana-1",
-    marginBottom: 32,
-    backgroundColor: "transparent",
-    borderColor: "#e8e8e8",
-    fontFamily: "Silvana-1",
-    color: "#212121",
-    textAlign: "left",
-    padding: Platform.OS === "ios" ? 14 : 10,
-    fontSize: Platform.OS === "ios" ? 16 : 14,
-    borderBottomWidth: 1,
-  },
-  button: {
-    alignItems: "center",
-    justifyContent: "center",
-    borderRadius: 100,
-    marginTop: 15,
-    padding: 16,
-    backgroundColor: "#FF6C00",
-  },
-  buttonText: {
-    fontFamily: "Silvana-1",
-    color: "#fff",
-    fontSize: 16,
-    lineHeight: 19,
-  },
-  clear_conteiner: {
-    marginTop: "auto",
-    justifyContent: "center",
-    alignItems: "center",
-    width: 70,
-    height: 40,
-    borderRadius: 50,
-    backgroundColor: "#F6F6F6",
   },
 });

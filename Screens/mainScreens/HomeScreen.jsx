@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Feather } from "@expo/vector-icons";
 
 import {
@@ -6,16 +6,20 @@ import {
   View,
   StyleSheet,
   Image,
-  TouchableOpacity,
-  ImageBackground,
   Dimensions,
-  SafeAreaView,
-  ScrollView,
+  FlatList,
 } from "react-native";
 
-const HomeScreen = ({ navigation }) => {
+const HomeScreen = ({ navigation, route }) => {
+  const [posts, setPosts] = useState([]);
   const [width, setwidth] = useState(Dimensions.get("screen").width - 32);
   const [count, setCount] = useState(0);
+
+  useEffect(() => {
+    if (route.params) {
+      setPosts((prev) => [...prev, route.params]);
+    }
+  }, [route.params]);
   return (
     <View style={styles.conteiner}>
       <View style={styles.profile_conteiner}>
@@ -28,74 +32,50 @@ const HomeScreen = ({ navigation }) => {
           <Text style={styles.email}>ViktorHrimli@gmail.com</Text>
         </View>
       </View>
-      <ScrollView showsVerticalScrollIndicator={false}>
-        <ImageBackground
-          style={{ ...styles.conteiner_img, width }}
-          borderRadius={8}
-          source={require("../../assets/img/wood.jpg")}
-        ></ImageBackground>
-        <Text style={styles.text_title}>Wood</Text>
-        <View
-          style={{
-            flexDirection: "row",
-            alignItems: "flex-end",
-            marginTop: 8,
-            marginBottom: 10,
-          }}
-        >
-          <View style={styles.comment_conteiner}>
-            <Feather
-              name="message-circle"
-              size={21}
-              color="#BDBDBD"
-              style={{ marginRight: 7 }}
-              onPress={() => navigation.navigate("Comment")}
-            />
-            <Text
-              onPress={() => setCount((prev) => prev + 1)}
-              style={styles.count_comment}
+      <FlatList
+        data={posts}
+        keyExtractor={(_, idx) => idx.toString()}
+        renderItem={({ item }) => (
+          <View style={{ flex: 1 }}>
+            <Image
+              style={{ ...styles.conteiner_img, width }}
+              borderRadius={8}
+              source={{ uri: item.photo }}
+            ></Image>
+            <Text style={styles.text_title}>{item.input.title}</Text>
+            <View
+              style={{
+                flexDirection: "row",
+                alignItems: "flex-end",
+                marginTop: 8,
+              }}
             >
-              {count}
-            </Text>
+              <View style={styles.comment_conteiner}>
+                <Feather
+                  name="message-circle"
+                  size={21}
+                  color="#BDBDBD"
+                  style={{ marginRight: 7 }}
+                  onPress={() => navigation.navigate("Comment")}
+                />
+                <Text style={styles.count_comment}>0</Text>
+              </View>
+              <View style={styles.location_conteiner}>
+                <Feather
+                  style={{}}
+                  name="map-pin"
+                  size={18}
+                  color="#BDBDBD"
+                  onPress={() => navigation.navigate("Map", item.location)}
+                />
+                <Text style={{ marginLeft: 8, color: "#212121", fontSize: 16 }}>
+                  {item.input.location}
+                </Text>
+              </View>
+            </View>
           </View>
-          <View style={styles.location_conteiner}>
-            <Feather style={{}} name="map-pin" size={18} color="#BDBDBD" />
-            <Text style={{ marginLeft: 8, color: "#212121", fontSize: 16 }}>
-              Ivano-Frankivs'k Region, Ukraine
-            </Text>
-          </View>
-        </View>
-        <ImageBackground
-          style={{ ...styles.conteiner_img, width }}
-          borderRadius={8}
-          source={require("../../assets/img/wood.jpg")}
-        ></ImageBackground>
-        <Text style={styles.text_title}>Wood</Text>
-        <View
-          style={{
-            flexDirection: "row",
-            alignItems: "flex-end",
-            marginTop: 8,
-          }}
-        >
-          <View style={styles.comment_conteiner}>
-            <Feather
-              name="message-circle"
-              size={21}
-              color="#BDBDBD"
-              style={{ marginRight: 7 }}
-              onPress={() => navigation.navigate("Comment")}
-            />
-            <Text style={styles.count_comment}>0</Text>
-          </View>
-          <View style={styles.location_conteiner}>
-            <Feather style={{}} name="map-pin" size={18} color="#BDBDBD" />
-            <Text style={{ marginLeft: 8, color: "#212121", fontSize: 16 }}>
-              Ivano-Frankivs'k Region, Ukraine
-            </Text>
-          </View>
-        </View>
-      </ScrollView>
+        )}
+      ></FlatList>
     </View>
   );
 };

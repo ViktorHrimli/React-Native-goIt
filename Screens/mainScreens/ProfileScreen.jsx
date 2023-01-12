@@ -38,7 +38,6 @@ const ProfileScreen = ({ navigation }) => {
               flexDirection: "row",
               alignItems: "flex-end",
               marginTop: 8,
-              marginBottom: 10,
             }}
           >
             <View style={styles.like_conteiner}>
@@ -62,47 +61,13 @@ const ProfileScreen = ({ navigation }) => {
               <Text style={styles.count_comment}>{count}</Text>
             </View>
             <View style={styles.location_conteiner}>
-              <Feather style={{}} name="map-pin" size={18} color="#BDBDBD" />
-              <Text style={{ marginLeft: 8, color: "#212121", fontSize: 16 }}>
-                Ukraine
-              </Text>
-            </View>
-          </View>
-          <ImageBackground
-            style={{ ...styles.conteiner_img_post, width }}
-            borderRadius={8}
-            source={require("../../assets/img/wood.jpg")}
-          ></ImageBackground>
-          <Text style={styles.text_title}>Wood</Text>
-          <View
-            style={{
-              flexDirection: "row",
-              alignItems: "flex-end",
-              marginTop: 8,
-            }}
-          >
-            <View style={styles.like_conteiner}>
               <Feather
-                name="message-circle"
-                size={21}
-                color="#FF6C00"
-                style={{ marginRight: 7 }}
-                onPress={() => navigation.navigate("Comment")}
-              />
-              <Text style={styles.count_comment}>0</Text>
-            </View>
-            <View style={styles.comment_conteiner}>
-              <Feather
-                style={{ marginRight: 7 }}
-                name="thumbs-up"
+                style={{}}
+                name="map-pin"
                 size={18}
-                color="#FF6C00"
-                onPress={() => setcount((prev) => prev + 1)}
+                color="#BDBDBD"
+                onPress={() => navigation.navigate("Map")}
               />
-              <Text style={styles.count_comment}>{count}</Text>
-            </View>
-            <View style={styles.location_conteiner}>
-              <Feather style={{}} name="map-pin" size={18} color="#BDBDBD" />
               <Text style={{ marginLeft: 8, color: "#212121", fontSize: 16 }}>
                 Ukraine
               </Text>
