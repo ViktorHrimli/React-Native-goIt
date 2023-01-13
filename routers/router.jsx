@@ -7,4 +7,4 @@ const useRouting = (isAuth) => {
   return isAuth ? <MainTabsNav /> : <StackNav />;
 };
 
-export default useRouting;
+export { useRouting };
