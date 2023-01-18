@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from "react";
+import { useDispatch } from "react-redux";
+
 import {
   ImageBackground,
   View,
@@ -13,6 +15,7 @@ import {
 } from "react-native";
 
 import { styles } from "./Log.styled";
+import { authSignIn } from "../../redux/auth/authOperations";
 
 const initialState = {
   email: "",
@@ -23,17 +26,19 @@ const LoginScreen = ({ navigation }) => {
   const [isShowKeyboard, setIsShowKeyboard] = useState(false);
   const [input, setInput] = useState(initialState);
 
+  const dispatch = useDispatch();
+
   const [dimension, setDimension] = useState(
     Dimensions.get("window").width - 20 * 2
   );
 
-  const handleFocuse = () => {
+  const handleLogin = () => {
     Keyboard.dismiss();
     setIsShowKeyboard(false);
 
-    console.log(input);
+    dispatch(authSignIn(input));
+
     setInput(() => initialState);
-    // navigation.jumpTo("Home");
   };
 
   useEffect(() => {
@@ -67,7 +72,7 @@ const LoginScreen = ({ navigation }) => {
               <View>
                 <TextInput
                   style={styles.input}
-                  placeholder="Email or Phone"
+                  placeholder="Email"
                   value={input.email}
                   onChangeText={(value) =>
                     setInput((prev) => ({ ...prev, email: value }))
@@ -87,7 +92,7 @@ const LoginScreen = ({ navigation }) => {
                   onFocus={() => setIsShowKeyboard(true)}
                 />
               </View>
-              <TouchableOpacity style={styles.button} onPress={handleFocuse}>
+              <TouchableOpacity style={styles.button} onPress={handleLogin}>
                 <Text style={styles.buttonText}>Send</Text>
               </TouchableOpacity>
               <View style={{ alignItems: "center", marginTop: 10 }}>

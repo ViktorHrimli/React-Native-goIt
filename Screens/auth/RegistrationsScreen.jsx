@@ -14,6 +14,9 @@ import {
 
 import { styles } from "./Reg.styled";
 
+import { authSignUp } from "../../redux/auth/authOperations";
+import { useDispatch } from "react-redux";
+
 const initialState = {
   name: "",
   email: "",
@@ -24,18 +27,18 @@ const RegistrationsScreen = ({ navigation }) => {
   const [isShowKeyboard, setIsShowKeyboard] = useState(false);
   const [input, setInput] = useState(initialState);
 
+  const dispatch = useDispatch();
+
   const [dimension, setDimension] = useState(
     Dimensions.get("window").width - 20 * 2
   );
 
-  const handleFocuse = () => {
+  const handleSubmit = () => {
     Keyboard.dismiss();
     setIsShowKeyboard(false);
 
-    console.log(input);
+    dispatch(authSignUp(input));
     setInput(() => initialState);
-
-    // navigation.jumpTo("Home");
   };
 
   useEffect(() => {
@@ -109,7 +112,7 @@ const RegistrationsScreen = ({ navigation }) => {
                   }
                 />
               </View>
-              <TouchableOpacity style={styles.button} onPress={handleFocuse}>
+              <TouchableOpacity style={styles.button} onPress={handleSubmit}>
                 <Text style={styles.buttonText}>Send</Text>
               </TouchableOpacity>
               <View style={{ alignItems: "center", marginTop: 10 }}>

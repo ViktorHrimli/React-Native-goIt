@@ -28,23 +28,6 @@ const PostsScreen = ({ navigation }) => {
 
   const cameraRef = useRef(null);
 
-  useEffect(() => {
-    (async () => {
-      const { status } = await Camera.requestCameraPermissionsAsync();
-      setHasPermission(status === "granted");
-    })();
-  }, []);
-
-  useEffect(() => {
-    (async () => {
-      let { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== "granted") {
-        setErrorMsg("Permission to access location was denied");
-        return;
-      }
-    })();
-  }, []);
-
   const onCameraReady = () => {
     setCameraReady(true);
   };
@@ -73,13 +56,6 @@ const PostsScreen = ({ navigation }) => {
     setType((prev) =>
       prev === CameraType.back ? CameraType.front : CameraType.back
     );
-
-  if (hasPermission === null) {
-    return <View />;
-  }
-  if (hasPermission === false) {
-    return <Text style={styles.text}>No access to camera</Text>;
-  }
 
   return (
     <ScrollView>

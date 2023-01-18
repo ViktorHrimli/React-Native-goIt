@@ -1,4 +1,5 @@
 import React from "react";
+import { useDispatch } from "react-redux";
 
 import { Ionicons } from "@expo/vector-icons";
 import { AntDesign } from "@expo/vector-icons";
@@ -8,17 +9,23 @@ import { TouchableOpacity, View } from "react-native";
 
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 
-//
-
+//components
 import HomeScreen from "../Screens/mainScreens/HomeScreen";
 import MapScreen from "../Screens/nestedSreens/MapScreen";
 import CommentsScreen from "../Screens/nestedSreens/CommentsScreen";
 import PostsScreen from "../Screens/mainScreens/PostsScreen";
 import ProfileScreen from "../Screens/mainScreens/ProfileScreen";
+import { authSignOut } from "../redux/auth/authOperations";
 
 const MainTabs = createBottomTabNavigator();
 
 const MainTabsNav = () => {
+  const dispatch = useDispatch();
+
+  const handleLogOut = () => {
+    dispatch(authSignOut());
+  };
+
   return (
     <MainTabs.Navigator
       screenOptions={{
@@ -41,9 +48,7 @@ const MainTabsNav = () => {
                 paddingRight: 20,
               }}
             >
-              <TouchableOpacity
-                onPress={() => console.log("Fuck off i log out")}
-              >
+              <TouchableOpacity onPress={handleLogOut}>
                 <Feather name="log-out" size={24} color="black" />
               </TouchableOpacity>
             </View>
