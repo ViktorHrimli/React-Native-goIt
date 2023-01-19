@@ -4,6 +4,7 @@ import { MaterialIcons } from "@expo/vector-icons";
 import { Ionicons } from "@expo/vector-icons";
 
 import * as Location from "expo-location";
+import { getStorage, ref, uploadBytes } from "firebase/storage";
 
 import {
   Text,
@@ -19,8 +20,6 @@ import FormPost from "../../components/FormPost/FormPost";
 
 const PostsScreen = ({ navigation }) => {
   const [location, setLocation] = useState(null);
-  const [errorMsg, setErrorMsg] = useState(null);
-  const [hasPermission, setHasPermission] = useState(null);
   const [type, setType] = useState(CameraType.back);
   const [photo, setphoto] = useState(null);
   const [cameraReady, setCameraReady] = useState(false);
@@ -39,11 +38,30 @@ const PostsScreen = ({ navigation }) => {
       const source = data.uri;
       setLocation(location);
       setphoto(source);
-
+      console.log(source);
+      // upload file in storage
+      uploadPhonoInStorage();
+      // show preview
       if (source) {
         await cameraRef.current.pausePreview();
         setIsPreview(true);
       }
+    }
+  };
+
+  const uploadPhonoInStorage = async () => {
+    try {
+      const resp = await fetch(photo).then((res) => res.blob());
+
+      const storage = getStorage();
+      const uniqueIdImage = Date.now().toString();
+
+      const storageRef = ref(storage, `Images/${uniqueIdImage}`);
+
+      await uploadBytes(storageRef, resp);
+    } catch (error) {
+      console.log(error);
+      console.log(error.message);
     }
   };
 

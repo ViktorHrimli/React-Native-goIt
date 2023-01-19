@@ -15,8 +15,14 @@ const authSlice = createSlice({
       userId: payload.uid,
       name: payload.displayName,
     }),
+    stateChangeUser: (state, { payload }) => ({
+      ...state,
+      stateChange: payload,
+    }),
+    logOutUser: () => initialState,
   },
 });
 
-export const { saveUserProfile } = authSlice.actions;
+export const { saveUserProfile, stateChangeUser, logOutUser } =
+  authSlice.actions;
 export const authReducer = authSlice.reducer;

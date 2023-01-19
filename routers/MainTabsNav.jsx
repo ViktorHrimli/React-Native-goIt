@@ -15,6 +15,7 @@ import MapScreen from "../Screens/nestedSreens/MapScreen";
 import CommentsScreen from "../Screens/nestedSreens/CommentsScreen";
 import PostsScreen from "../Screens/mainScreens/PostsScreen";
 import ProfileScreen from "../Screens/mainScreens/ProfileScreen";
+
 import { authSignOut } from "../redux/auth/authOperations";
 
 const MainTabs = createBottomTabNavigator();
@@ -70,9 +71,7 @@ const MainTabsNav = () => {
                 paddingLeft: 20,
               }}
             >
-              <TouchableOpacity
-                onPress={() => console.log("Fuck off i log out")}
-              >
+              <TouchableOpacity onPress={() => {}}>
                 <Ionicons name="arrow-back-outline" size={24} color="black" />
               </TouchableOpacity>
             </View>

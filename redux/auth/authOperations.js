@@ -2,14 +2,14 @@ import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   signOut,
-  updateCurrentUser,
   updateProfile,
+  onAuthStateChanged,
 } from "firebase/auth";
 
 import { auth } from "../../FireBase/config";
 
-import { saveUserProfile } from "./authSlice";
-
+import { saveUserProfile, stateChangeUser, logOutUser } from "./authSlice";
+// REGISTR
 const authSignUp =
   ({ email, password, name }) =>
   async (dispatch, getState) => {
@@ -22,34 +22,50 @@ const authSignUp =
 
       const { displayName, uid } = auth.currentUser;
 
-      console.log(auth.currentUser);
-
-      dispatch(
-        saveUserProfile({
-          displayName,
-          uid,
-        })
-      );
+      dispatch(saveUserProfile({ displayName, uid }));
     } catch (error) {
       console.log(error);
       console.log(error.message);
     }
   };
-
+// LOGIN
 const authSignIn =
   ({ email, password }) =>
   async (dispatch, getState) => {
     try {
-      await signInWithEmailAndPassword(auth, email, password).then((data) =>
-        dispatch(saveUserProfile(data.user.uid))
+      await signInWithEmailAndPassword(auth, email, password).then(
+        ({ user }) => {
+          const { displayName, uid } = user;
+          dispatch(saveUserProfile({ displayName, uid }));
+        }
       );
     } catch (error) {
       console.log(error);
       console.log(error.message);
     }
   };
+// LOGOUT
 const authSignOut = () => async (dispatch, getState) => {
-  signOut(auth).then((user) => console.log("User logOut"));
+  await signOut(auth);
+
+  dispatch(logOutUser());
 };
 
-export { authSignIn, authSignUp, authSignOut };
+// REFRESH
+const authStateChanged = () => async (dispatch, getState) => {
+  try {
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        const { displayName, uid } = user;
+
+        dispatch(saveUserProfile({ displayName, uid }));
+        dispatch(stateChangeUser(true));
+      }
+    });
+  } catch (error) {
+    console.log(error);
+    console.log(error.message);
+  }
+};
+
+export { authSignIn, authSignUp, authSignOut, authStateChanged };
