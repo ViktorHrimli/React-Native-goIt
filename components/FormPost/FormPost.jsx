@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
+// icons
 import { Feather } from "@expo/vector-icons";
 import { FontAwesome } from "@expo/vector-icons";
 
@@ -11,6 +13,8 @@ import {
   TouchableOpacity,
 } from "react-native";
 
+import { uploadPhonoInStorage, uploadPostOnDataBase } from "../../FireBase/";
+
 const initialState = {
   title: "",
   location: "",
@@ -19,11 +23,26 @@ const initialState = {
 const FormPost = ({ navigation, photo, location }) => {
   const [input, setInput] = useState(initialState);
   const [isShowKeyboard, setIsShowKeyboard] = useState(false);
+
+  const { userId, name } = useSelector((state) => state.verify);
+  // width
   const [dimension, setDimension] = useState(
     Dimensions.get("window").width - 20 * 2
   );
 
-  const onHandleSubmit = () => {
+  const onHandleSubmit = async () => {
+    // upload file in storage
+
+    const newPhoto = await uploadPhonoInStorage(photo);
+
+    uploadPostOnDataBase({
+      input,
+      newPhoto,
+      location: location.coords,
+      userId,
+      name,
+    });
+
     navigation.navigate("Home", { input, photo, location });
     setInput(initialState);
   };

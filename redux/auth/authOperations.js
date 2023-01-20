@@ -6,7 +6,7 @@ import {
   onAuthStateChanged,
 } from "firebase/auth";
 
-import { auth } from "../../FireBase/config";
+import { auth } from "../../FireBase";
 
 import { saveUserProfile, stateChangeUser, logOutUser } from "./authSlice";
 // REGISTR

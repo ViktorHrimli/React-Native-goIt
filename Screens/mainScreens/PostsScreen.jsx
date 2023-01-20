@@ -4,7 +4,6 @@ import { MaterialIcons } from "@expo/vector-icons";
 import { Ionicons } from "@expo/vector-icons";
 
 import * as Location from "expo-location";
-import { getStorage, ref, uploadBytes } from "firebase/storage";
 
 import {
   Text,
@@ -16,14 +15,37 @@ import {
   SafeAreaView,
 } from "react-native";
 
+import { uploadPhonoInStorage } from "../../FireBase/";
+
 import FormPost from "../../components/FormPost/FormPost";
 
 const PostsScreen = ({ navigation }) => {
+  const [errorMsg, setErrorMsg] = useState(null);
+  const [hasPermission, setHasPermission] = useState(null);
+  // premissions state
+
   const [location, setLocation] = useState(null);
   const [type, setType] = useState(CameraType.back);
   const [photo, setphoto] = useState(null);
   const [cameraReady, setCameraReady] = useState(false);
   const [isPreview, setIsPreview] = useState(false);
+
+  useEffect(() => {
+    (async () => {
+      const { status } = await Camera.requestCameraPermissionsAsync();
+      setHasPermission(status === "granted");
+    })();
+  }, []);
+
+  useEffect(() => {
+    (async () => {
+      let { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== "granted") {
+        setErrorMsg("Permission to access location was denied");
+        return;
+      }
+    })();
+  }, []);
 
   const cameraRef = useRef(null);
 
@@ -32,41 +54,29 @@ const PostsScreen = ({ navigation }) => {
   };
 
   const takeSnap = async () => {
+    let location = await Location.getCurrentPositionAsync({});
+
     if (cameraRef.current) {
-      const data = await cameraRef.current.takePictureAsync();
-      let location = await Location.getCurrentPositionAsync({});
+      const data = await cameraRef.current.takePictureAsync({});
       const source = data.uri;
       setLocation(location);
-      setphoto(source);
-      console.log(source);
-      // upload file in storage
-      uploadPhonoInStorage();
+
       // show preview
+
       if (source) {
+        setphoto(source);
         await cameraRef.current.pausePreview();
         setIsPreview(true);
+        // upload file in storage
+
+        // await uploadPhonoInStorage(source).then((url) => setphoto(url));
       }
-    }
-  };
-
-  const uploadPhonoInStorage = async () => {
-    try {
-      const resp = await fetch(photo).then((res) => res.blob());
-
-      const storage = getStorage();
-      const uniqueIdImage = Date.now().toString();
-
-      const storageRef = ref(storage, `Images/${uniqueIdImage}`);
-
-      await uploadBytes(storageRef, resp);
-    } catch (error) {
-      console.log(error);
-      console.log(error.message);
     }
   };
 
   const cancelPreview = async () => {
     await cameraRef.current.resumePreview();
+
     setIsPreview(false);
   };
 
@@ -74,6 +84,8 @@ const PostsScreen = ({ navigation }) => {
     setType((prev) =>
       prev === CameraType.back ? CameraType.front : CameraType.back
     );
+
+  // +================================ PREMISSIONS
 
   return (
     <ScrollView>
