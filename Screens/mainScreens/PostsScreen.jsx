@@ -94,7 +94,6 @@ const PostsScreen = ({ navigation }) => {
           ref={cameraRef}
           type={type}
           style={styles.conteiner_skeleton}
-          flashMode={Camera.Constants.FlashMode.on}
           onCameraReady={onCameraReady}
           onMountError={(error) => {
             console.log("camera error", error);

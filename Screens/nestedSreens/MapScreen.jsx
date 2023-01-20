@@ -6,7 +6,7 @@ const MapScreen = ({ route }) => {
   const [coords, setCoords] = useState(null);
   useEffect(() => {
     if (route.params) {
-      setCoords(route.params.coords);
+      setCoords(route.params);
     }
   }, [route.params]);
   return (

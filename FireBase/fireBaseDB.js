@@ -1,9 +1,29 @@
-import { getDatabase, ref, set, onValue, get, child } from "firebase/database";
+import {
+  getDatabase,
+  ref,
+  set,
+  onValue,
+  get,
+  push,
+  child,
+  query,
+  limitToLast,
+} from "firebase/database";
 
 const uploadPostOnDataBase = (post) => {
   const db = getDatabase();
 
-  set(ref(db, "posts/" + post.userId), post);
+  const json = {
+    name: post.name,
+    info: post.input,
+    location: post.location,
+    photo: post.newPhoto,
+    userId: post.userId,
+  };
+
+  const postListRef = ref(db, "posts/" + post.userId);
+  const newPostRef = push(postListRef);
+  set(newPostRef, json);
 };
 
 const readDataPosts = (userId) => {

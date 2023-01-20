@@ -43,7 +43,7 @@ const FormPost = ({ navigation, photo, location }) => {
       name,
     });
 
-    navigation.navigate("Home", { input, photo, location });
+    navigation.navigate("Home");
     setInput(initialState);
   };
 

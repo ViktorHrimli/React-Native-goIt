@@ -23,13 +23,12 @@ const HomeScreen = ({ navigation, route }) => {
 
   useEffect(() => {
     readDataPosts(userId).then((snapshoot) => {
-      if (snapshoot.exists()) {
-        setPosts((prev) => prev.concat([snapshoot.val()]));
-      }
+      snapshoot.forEach((item) => setPosts((prev) => prev.concat(item.val())));
     });
-
-    console.log(posts);
   }, []);
+
+  console.log(posts);
+
   return (
     <View style={styles.conteiner}>
       <View style={styles.profile_conteiner}>
@@ -50,9 +49,9 @@ const HomeScreen = ({ navigation, route }) => {
             <Image
               style={{ ...styles.conteiner_img, width }}
               borderRadius={8}
-              source={{ uri: item.newPhoto }}
+              source={{ uri: item.photo }}
             ></Image>
-            <Text style={styles.text_title}>{item.input.title}</Text>
+            <Text style={styles.text_title}>{item.info.title}</Text>
             <View
               style={{
                 flexDirection: "row",
@@ -79,7 +78,7 @@ const HomeScreen = ({ navigation, route }) => {
                   onPress={() => navigation.navigate("Map", item.location)}
                 />
                 <Text style={{ marginLeft: 8, color: "#212121", fontSize: 16 }}>
-                  {item.input.location}
+                  {item.info.location}
                 </Text>
               </View>
             </View>
