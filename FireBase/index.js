@@ -1,5 +1,5 @@
 import { auth } from "./config";
-import { uploadPostOnDataBase } from "./fireBaseDB";
+import { uploadPostOnDataBase, readDataPosts } from "./fireBaseDB";
 import { uploadPhonoInStorage } from "./fireBaseStorage";
 
-export { auth, uploadPhonoInStorage, uploadPostOnDataBase };
+export { auth, uploadPhonoInStorage, uploadPostOnDataBase, readDataPosts };

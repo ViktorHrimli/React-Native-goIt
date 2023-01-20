@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from "react";
+// icons
 import { Feather } from "@expo/vector-icons";
+
+import { readDataPosts } from "../../FireBase";
 
 import {
   Text,
@@ -9,17 +12,24 @@ import {
   Dimensions,
   FlatList,
 } from "react-native";
+import { useSelector } from "react-redux";
 
 const HomeScreen = ({ navigation, route }) => {
   const [posts, setPosts] = useState([]);
   const [width, setwidth] = useState(Dimensions.get("screen").width - 32);
   const [count, setCount] = useState(0);
 
+  const userId = useSelector((state) => state.verify.userId);
+
   useEffect(() => {
-    if (route.params) {
-      setPosts((prev) => [...prev, route.params]);
-    }
-  }, [route.params]);
+    readDataPosts(userId).then((snapshoot) => {
+      if (snapshoot.exists()) {
+        setPosts((prev) => prev.concat([snapshoot.val()]));
+      }
+    });
+
+    console.log(posts);
+  }, []);
   return (
     <View style={styles.conteiner}>
       <View style={styles.profile_conteiner}>
@@ -40,7 +50,7 @@ const HomeScreen = ({ navigation, route }) => {
             <Image
               style={{ ...styles.conteiner_img, width }}
               borderRadius={8}
-              source={{ uri: item.photo }}
+              source={{ uri: item.newPhoto }}
             ></Image>
             <Text style={styles.text_title}>{item.input.title}</Text>
             <View
