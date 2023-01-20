@@ -32,8 +32,9 @@ const FormPost = ({ navigation, photo, location }) => {
 
   const onHandleSubmit = async () => {
     // upload file in storage
+    const newPhoto = uploadPhonoInStorage(photo);
 
-    const newPhoto = await uploadPhonoInStorage(photo);
+    navigation.navigate("Home");
 
     uploadPostOnDataBase({
       input,
@@ -43,7 +44,6 @@ const FormPost = ({ navigation, photo, location }) => {
       name,
     });
 
-    navigation.navigate("Home");
     setInput(initialState);
   };
 

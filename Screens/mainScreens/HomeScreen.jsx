@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from "react";
+import { useSelector } from "react-redux";
+
 // icons
 import { Feather } from "@expo/vector-icons";
 
@@ -12,33 +14,31 @@ import {
   Dimensions,
   FlatList,
 } from "react-native";
-import { useSelector } from "react-redux";
 
 const HomeScreen = ({ navigation, route }) => {
   const [posts, setPosts] = useState([]);
   const [width, setwidth] = useState(Dimensions.get("screen").width - 32);
   const [count, setCount] = useState(0);
 
-  const userId = useSelector((state) => state.verify.userId);
+  const { userId, name, email, photo } = useSelector((state) => state.verify);
 
   useEffect(() => {
     readDataPosts(userId).then((snapshoot) => {
-      snapshoot.forEach((item) => setPosts((prev) => prev.concat(item.val())));
+      setPosts([]);
+
+      snapshoot.forEach((item, key) => {
+        return setPosts((prev) => prev.concat(item.val()));
+      });
     });
   }, []);
-
-  console.log(posts);
 
   return (
     <View style={styles.conteiner}>
       <View style={styles.profile_conteiner}>
-        <Image
-          style={styles.image}
-          source={require("../../assets/img/photo_2022-12-27_02-15-19.jpg")}
-        />
+        <Image style={styles.image} source={{ uri: photo }} />
         <View style={{ marginLeft: 8 }}>
-          <Text style={styles.name}>Viktor Hrimli</Text>
-          <Text style={styles.email}>ViktorHrimli@gmail.com</Text>
+          <Text style={styles.name}>{name}</Text>
+          <Text style={styles.email}>{email}</Text>
         </View>
       </View>
       <FlatList

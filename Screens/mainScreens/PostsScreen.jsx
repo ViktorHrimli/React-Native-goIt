@@ -62,14 +62,9 @@ const PostsScreen = ({ navigation }) => {
       setLocation(location);
 
       // show preview
-
       if (source) {
-        setphoto(source);
         await cameraRef.current.pausePreview();
         setIsPreview(true);
-        // upload file in storage
-
-        // await uploadPhonoInStorage(source).then((url) => setphoto(url));
       }
     }
   };

@@ -23,7 +23,6 @@ const styles = StyleSheet.create({
     height: 120,
     zIndex: 1,
     borderRadius: 16,
-    backgroundColor: "#F6F6F6",
   },
   titleText: {
     fontFamily: "Silvana-1",

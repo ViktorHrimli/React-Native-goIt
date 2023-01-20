@@ -11,18 +11,19 @@ import { auth } from "../../FireBase";
 import { saveUserProfile, stateChangeUser, logOutUser } from "./authSlice";
 // REGISTR
 const authSignUp =
-  ({ email, password, name }) =>
+  ({ email, password, name, photo }) =>
   async (dispatch, getState) => {
     try {
       await createUserWithEmailAndPassword(auth, email, password);
 
       await updateProfile(auth.currentUser, {
         displayName: name,
+        photoURL: photo,
       }).then(() => console.log("Updated"));
 
-      const { displayName, uid } = auth.currentUser;
+      const { displayName, uid, photoURL } = auth.currentUser;
 
-      dispatch(saveUserProfile({ displayName, uid }));
+      dispatch(saveUserProfile({ displayName, uid, email, photoURL }));
     } catch (error) {
       console.log(error);
       console.log(error.message);
@@ -35,8 +36,8 @@ const authSignIn =
     try {
       await signInWithEmailAndPassword(auth, email, password).then(
         ({ user }) => {
-          const { displayName, uid } = user;
-          dispatch(saveUserProfile({ displayName, uid }));
+          const { displayName, uid, email, photoURL } = user;
+          dispatch(saveUserProfile({ displayName, uid, email, photoURL }));
         }
       );
     } catch (error) {
@@ -56,9 +57,9 @@ const authStateChanged = () => async (dispatch, getState) => {
   try {
     onAuthStateChanged(auth, (user) => {
       if (user) {
-        const { displayName, uid } = user;
+        const { displayName, uid, email, photoURL } = user;
 
-        dispatch(saveUserProfile({ displayName, uid }));
+        dispatch(saveUserProfile({ displayName, uid, email, photoURL }));
         dispatch(stateChangeUser(true));
       }
     });

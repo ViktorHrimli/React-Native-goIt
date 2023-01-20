@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+// icons
 import { Feather } from "@expo/vector-icons";
 
 import {
@@ -9,10 +10,13 @@ import {
   Dimensions,
   ScrollView,
 } from "react-native";
+import { useSelector } from "react-redux";
 
 const ProfileScreen = ({ navigation }) => {
   const [width, setwidth] = useState(Dimensions.get("screen").width - 32);
   const [count, setcount] = useState(0);
+
+  const { name, email, photo, userId } = useSelector((state) => state.verify);
 
   return (
     <ImageBackground
@@ -22,10 +26,10 @@ const ProfileScreen = ({ navigation }) => {
       <View style={styles.conteiner}>
         <ImageBackground
           borderRadius={16}
-          source={require("../../assets/img/photo_2022-12-27_02-15-19.jpg")}
+          source={{ uri: photo }}
           style={styles.conteiner_img}
         ></ImageBackground>
-        <Text style={styles.title_name}>Viktor Hrimli</Text>
+        <Text style={styles.title_name}>{name}</Text>
         <ScrollView showsVerticalScrollIndicator={false}>
           <ImageBackground
             style={{ ...styles.conteiner_img_post, width }}

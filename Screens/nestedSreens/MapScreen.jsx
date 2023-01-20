@@ -14,8 +14,8 @@ const MapScreen = ({ route }) => {
       <MapView
         style={styles.conteiner}
         initialRegion={{
-          latitude: coords?.latitude || 40,
-          longitude: coords?.longitude || 21,
+          latitude: coords?.latitude,
+          longitude: coords?.longitude,
           latitudeDelta: 0.001,
           longitudeDelta: 0.005,
         }}
@@ -23,8 +23,8 @@ const MapScreen = ({ route }) => {
         <Marker
           title="Travel point"
           coordinate={{
-            latitude: coords?.latitude || 40,
-            longitude: coords?.longitude || 21,
+            latitude: coords?.latitude,
+            longitude: coords?.longitude,
           }}
         />
       </MapView>
