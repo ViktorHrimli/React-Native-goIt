@@ -15,7 +15,7 @@ import {
   FlatList,
 } from "react-native";
 
-const HomeScreen = ({ navigation, route }) => {
+const HomeScreen = ({ navigation }) => {
   const [posts, setPosts] = useState([]);
   const [width, setwidth] = useState(Dimensions.get("screen").width - 32);
   const [count, setCount] = useState(0);
@@ -32,11 +32,10 @@ const HomeScreen = ({ navigation, route }) => {
       setPosts([]);
 
       snapshoot.forEach((item) => {
-        return setPosts((prev) => prev.concat(item.val()));
+        return setPosts((prev) => prev.concat({ ...item.val(), id: item.key }));
       });
     });
   }, []);
-
   return (
     <View style={styles.conteiner}>
       <View style={styles.profile_conteiner}>
@@ -70,7 +69,7 @@ const HomeScreen = ({ navigation, route }) => {
                   size={21}
                   color="#BDBDBD"
                   style={{ marginRight: 7 }}
-                  onPress={() => navigation.navigate("Comment")}
+                  onPress={() => navigation.navigate("Comment", item.id)}
                 />
                 <Text style={styles.count_comment}>0</Text>
               </View>

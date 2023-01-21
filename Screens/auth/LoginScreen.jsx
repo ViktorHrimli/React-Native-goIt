@@ -60,9 +60,6 @@ const LoginScreen = ({ navigation }) => {
         source={require("../../assets/img/PhotoBG.jpg")}
         style={styles.image}
       >
-        <View
-          style={{ ...styles.conteinerImg, top: isShowKeyboard ? 70 : 240 }}
-        ></View>
         <View style={{ ...styles.conteiner, flex: isShowKeyboard ? 0.7 : 0.6 }}>
           <Text style={styles.title}>Login</Text>
           <KeyboardAvoidingView

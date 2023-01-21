@@ -5,7 +5,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { AntDesign } from "@expo/vector-icons";
 import { Feather } from "@expo/vector-icons";
 
-import { TouchableOpacity, View } from "react-native";
+import { TouchableOpacity, View, Text } from "react-native";
 
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 
@@ -112,6 +112,7 @@ const MainTabsNav = () => {
               </TouchableOpacity>
             </View>
           ),
+          tabBarHideOnKeyboard: true,
           tabBarIcon: () => {},
           tabBarButton: () => {},
         }}
@@ -134,7 +135,7 @@ const MainTabsNav = () => {
               </TouchableOpacity>
             </View>
           ),
-          tabBarIcon: () => {},
+          tabBarIcon: (focused, color, size) => {},
           tabBarButton: () => {},
         }}
       />

@@ -22,4 +22,17 @@ const readDataPosts = (userId) => {
   return get(child(dbRef, `posts/${userId}`));
 };
 
-export { uploadPostOnDataBase, readDataPosts };
+const uoloadComment = (comment, name, id, userId, date) => {
+  const db = getDatabase();
+
+  const postListRef = ref(db, "posts/" + userId + `/${id}` + "/comment");
+  const newPostRef = push(postListRef);
+
+  set(newPostRef, {
+    name,
+    comment,
+    date,
+  });
+};
+
+export { uploadPostOnDataBase, readDataPosts, uoloadComment };
