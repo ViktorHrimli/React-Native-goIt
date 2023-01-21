@@ -4,7 +4,11 @@ import { Text, View, StyleSheet, SafeAreaView, ScrollView } from "react-native";
 import CameraScreen from "../../components/Camera/NewCamera";
 
 const CommentsScreen = () => {
-  return <View style={styles.conteiner}>{/* <CameraScreen /> */}</View>;
+  return (
+    <View style={styles.conteiner}>
+      <CameraScreen />
+    </View>
+  );
 };
 
 export default CommentsScreen;

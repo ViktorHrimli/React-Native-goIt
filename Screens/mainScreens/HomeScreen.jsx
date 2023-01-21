@@ -20,13 +20,18 @@ const HomeScreen = ({ navigation, route }) => {
   const [width, setwidth] = useState(Dimensions.get("screen").width - 32);
   const [count, setCount] = useState(0);
 
-  const { userId, name, email, photo } = useSelector((state) => state.verify);
+  const {
+    userId,
+    name,
+    email,
+    photo: userPhoto,
+  } = useSelector((state) => state.verify);
 
   useEffect(() => {
     readDataPosts(userId).then((snapshoot) => {
       setPosts([]);
 
-      snapshoot.forEach((item, key) => {
+      snapshoot.forEach((item) => {
         return setPosts((prev) => prev.concat(item.val()));
       });
     });
@@ -35,7 +40,7 @@ const HomeScreen = ({ navigation, route }) => {
   return (
     <View style={styles.conteiner}>
       <View style={styles.profile_conteiner}>
-        <Image style={styles.image} source={{ uri: photo }} />
+        <Image style={styles.image} source={{ uri: userPhoto }} />
         <View style={{ marginLeft: 8 }}>
           <Text style={styles.name}>{name}</Text>
           <Text style={styles.email}>{email}</Text>

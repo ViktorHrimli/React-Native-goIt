@@ -1,16 +1,6 @@
-import {
-  getDatabase,
-  ref,
-  set,
-  onValue,
-  get,
-  push,
-  child,
-  query,
-  limitToLast,
-} from "firebase/database";
+import { getDatabase, ref, set, get, push, child } from "firebase/database";
 
-const uploadPostOnDataBase = (post) => {
+const uploadPostOnDataBase = async (post) => {
   const db = getDatabase();
 
   const json = {

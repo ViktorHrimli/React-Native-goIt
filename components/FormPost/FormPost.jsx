@@ -4,6 +4,8 @@ import { useSelector } from "react-redux";
 import { Feather } from "@expo/vector-icons";
 import { FontAwesome } from "@expo/vector-icons";
 
+import * as Location from "expo-location";
+
 import {
   Text,
   View,
@@ -13,16 +15,17 @@ import {
   TouchableOpacity,
 } from "react-native";
 
-import { uploadPhonoInStorage, uploadPostOnDataBase } from "../../FireBase/";
+import { uploadPhonoInStorage, uploadPostOnDataBase } from "../../FireBase";
 
 const initialState = {
   title: "",
   location: "",
 };
 
-const FormPost = ({ navigation, photo, location }) => {
+const FormPost = ({ navigation, photo }) => {
   const [input, setInput] = useState(initialState);
   const [isShowKeyboard, setIsShowKeyboard] = useState(false);
+  const [location, setLocation] = useState(null);
 
   const { userId, name } = useSelector((state) => state.verify);
   // width
@@ -30,12 +33,15 @@ const FormPost = ({ navigation, photo, location }) => {
     Dimensions.get("window").width - 20 * 2
   );
 
+  const handleLocation = async () => {
+    let location = await Location.getCurrentPositionAsync({});
+    setLocation(location);
+  };
+
   const onHandleSubmit = async () => {
     // upload file in storage
-    const newPhoto = uploadPhonoInStorage(photo);
-
-    navigation.navigate("Home");
-
+    const newPhoto = await uploadPhonoInStorage(photo);
+    // upload post on DB
     uploadPostOnDataBase({
       input,
       newPhoto,
@@ -45,6 +51,8 @@ const FormPost = ({ navigation, photo, location }) => {
     });
 
     setInput(initialState);
+
+    navigation.navigate("Home");
   };
 
   useEffect(() => {
@@ -54,6 +62,16 @@ const FormPost = ({ navigation, photo, location }) => {
     };
     Dimensions.addEventListener("change", onChange);
   });
+
+  useEffect(() => {
+    (async () => {
+      let { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== "granted") {
+        setErrorMsg("Permission to access location was denied");
+        return;
+      }
+    })();
+  }, []);
 
   return (
     <View style={{ ...styles.form, width: dimension - 20 * 2 }}>
@@ -79,6 +97,7 @@ const FormPost = ({ navigation, photo, location }) => {
           style={{ ...styles.input, paddingLeft: 24 }}
           placeholder="Location"
           onFocus={() => setIsShowKeyboard(true)}
+          onBlur={handleLocation}
           value={input.location}
           onChangeText={(value) =>
             setInput((prev) => ({ ...prev, location: value }))
