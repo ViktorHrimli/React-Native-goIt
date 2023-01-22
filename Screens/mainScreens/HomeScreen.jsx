@@ -15,7 +15,7 @@ import {
   FlatList,
 } from "react-native";
 
-const HomeScreen = ({ navigation }) => {
+const HomeScreen = ({ navigation, route }) => {
   const [posts, setPosts] = useState([]);
   const [width, setwidth] = useState(Dimensions.get("screen").width - 32);
   const [count, setCount] = useState(0);
@@ -29,13 +29,14 @@ const HomeScreen = ({ navigation }) => {
 
   useEffect(() => {
     readDataPosts(userId).then((snapshoot) => {
-      setPosts([]);
-
       snapshoot.forEach((item) => {
-        return setPosts((prev) => prev.concat({ ...item.val(), id: item.key }));
+        if (!posts.find((newItem) => newItem.id === item.key)) {
+          setPosts((prev) => prev.concat({ ...item.val(), id: item.key }));
+        }
       });
     });
-  }, []);
+  }, [route.params]);
+
   return (
     <View style={styles.conteiner}>
       <View style={styles.profile_conteiner}>
@@ -47,9 +48,9 @@ const HomeScreen = ({ navigation }) => {
       </View>
       <FlatList
         data={posts}
-        keyExtractor={(_, idx) => idx.toString()}
+        keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => (
-          <View style={{ flex: 1 }}>
+          <View style={{ flex: 1, marginBottom: 30 }}>
             <Image
               style={{ ...styles.conteiner_img, width }}
               borderRadius={8}
@@ -58,8 +59,10 @@ const HomeScreen = ({ navigation }) => {
             <Text style={styles.text_title}>{item.info.title}</Text>
             <View
               style={{
+                width: width,
                 flexDirection: "row",
-                alignItems: "flex-end",
+                justifyContent: "space-between",
+                alignItems: "flex-start",
                 marginTop: 8,
               }}
             >

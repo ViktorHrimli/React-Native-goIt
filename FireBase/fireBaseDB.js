@@ -1,8 +1,15 @@
-import { getDatabase, ref, set, get, push, child } from "firebase/database";
+import {
+  getDatabase,
+  ref,
+  set,
+  get,
+  push,
+  child,
+  onValue,
+} from "firebase/database";
 
 const uploadPostOnDataBase = async (post) => {
   const db = getDatabase();
-
   const json = {
     name: post.name,
     info: post.input,
@@ -35,4 +42,9 @@ const uoloadComment = (comment, name, id, userId, date) => {
   });
 };
 
-export { uploadPostOnDataBase, readDataPosts, uoloadComment };
+const readComment = (userId, id) => {
+  const dbRef = ref(getDatabase());
+
+  return get(child(dbRef, `posts/${userId}/${id}/comment`));
+};
+export { uploadPostOnDataBase, readDataPosts, uoloadComment, readComment };

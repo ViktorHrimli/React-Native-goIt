@@ -1,4 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useSelector } from "react-redux";
+
 // icons
 import { AntDesign } from "@expo/vector-icons";
 
@@ -8,30 +10,43 @@ import {
   StyleSheet,
   SafeAreaView,
   ScrollView,
+  FlatList,
   Image,
   Dimensions,
   TouchableOpacity,
   TextInput,
 } from "react-native";
 
-import { uoloadComment } from "../../FireBase/fireBaseDB";
-import { useSelector } from "react-redux";
+import { uoloadComment, readComment } from "../../FireBase/fireBaseDB";
 
 const CommentsScreen = ({ route }) => {
   const [widht, setWidht] = useState(Dimensions.get("window").width);
   const [comment, setComment] = useState("");
+  const [dataComment, setDataComment] = useState([]);
+  const [refresh, setRefresh] = useState(false);
 
   const { name, userId } = useSelector((state) => state.verify);
+
   const id = route.params;
-
   const date = new Date();
-
-  console.log();
 
   const handleCreateComment = () => {
     uoloadComment(comment, name, id, userId, date.toLocaleString());
+    setRefresh((prev) => !prev);
     setComment("");
   };
+
+  useEffect(() => {
+    readComment(userId, id).then((snapshot) => {
+      snapshot.forEach((item) => {
+        if (!dataComment.find((newItem) => newItem.id === item.key)) {
+          setDataComment((prev) =>
+            prev.concat({ user: item.val(), id: item.key })
+          );
+        }
+      });
+    });
+  }, [refresh]);
 
   return (
     <View style={styles.conteiner}>
@@ -41,47 +56,25 @@ const CommentsScreen = ({ route }) => {
           source={require("../../assets/img/wood.jpg")}
         ></Image>
       </View>
-      <ScrollView style={{ paddingTop: 32 }}>
-        <View style={styles.conteiner_comments}>
-          <Image
-            source={require("../../assets/img/photo_2022-12-27_02-15-19.jpg")}
-            style={styles.user_photo}
-          />
-          <View style={styles.post}>
-            <Text style={{ ...styles.post_message, width: widht - 100 }}>
-              Really love your most recent photo. I’ve been trying to capture
-              the same thing for a few months and would love some tips!
-            </Text>
-            <Text style={styles.post_time}>09 июня, 2020 | 08:40</Text>
+      <FlatList
+        style={{ paddingTop: 32 }}
+        data={dataComment}
+        keyExtractor={(item) => item.id.toString()}
+        renderItem={({ item }) => (
+          <View style={styles.conteiner_comments}>
+            <Image
+              source={require("../../assets/img/photo_2022-12-27_02-15-19.jpg")}
+              style={styles.user_photo}
+            />
+            <View style={styles.post}>
+              <Text style={{ ...styles.post_message, width: widht - 100 }}>
+                {item.user.comment}
+              </Text>
+              <Text style={styles.post_time}>{item.user.date}</Text>
+            </View>
           </View>
-        </View>
-        <View style={styles.conteiner_comments}>
-          <Image
-            source={require("../../assets/img/photo_2022-12-27_02-15-19.jpg")}
-            style={styles.user_photo}
-          />
-          <View style={styles.post}>
-            <Text style={{ ...styles.post_message, width: widht - 100 }}>
-              Really love your most recent photo. I’ve been trying to capture
-              the same thing for a few months and would love some tips!
-            </Text>
-            <Text style={styles.post_time}>09 июня, 2020 | 08:40</Text>
-          </View>
-        </View>
-        <View style={styles.conteiner_comments}>
-          <Image
-            source={require("../../assets/img/photo_2022-12-27_02-15-19.jpg")}
-            style={styles.user_photo}
-          />
-          <View style={styles.post}>
-            <Text style={{ ...styles.post_message, width: widht - 100 }}>
-              Really love your most recent photo. I’ve been trying to capture
-              the same thing for a few months and would love some tips!
-            </Text>
-            <Text style={styles.post_time}>09 июня, 2020 | 08:40</Text>
-          </View>
-        </View>
-      </ScrollView>
+        )}
+      ></FlatList>
       <View style={styles.create_comment}>
         <TouchableOpacity
           style={styles.button_post}

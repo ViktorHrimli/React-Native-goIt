@@ -52,7 +52,7 @@ const FormPost = ({ navigation, photo }) => {
 
     setInput(initialState);
 
-    navigation.navigate("Home");
+    navigation.navigate("Home", "wd");
   };
 
   useEffect(() => {
@@ -97,7 +97,7 @@ const FormPost = ({ navigation, photo }) => {
           style={{ ...styles.input, paddingLeft: 24 }}
           placeholder="Location"
           onFocus={() => setIsShowKeyboard(true)}
-          onBlur={handleLocation}
+          onPressOut={handleLocation}
           value={input.location}
           onChangeText={(value) =>
             setInput((prev) => ({ ...prev, location: value }))
