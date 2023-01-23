@@ -1,34 +1,23 @@
 import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 
-// icons
-import { Feather } from "@expo/vector-icons";
+import { Text, View, StyleSheet, Image, FlatList } from "react-native";
 
 import { readDataPosts } from "../../FireBase";
 
-import {
-  Text,
-  View,
-  StyleSheet,
-  Image,
-  Dimensions,
-  FlatList,
-} from "react-native";
+import { PostsItem } from "../../components/ReUseComponents/PostsItem/PostsItem";
 
 const HomeScreen = ({ navigation, route }) => {
   const [posts, setPosts] = useState([]);
-  const [width, setwidth] = useState(Dimensions.get("screen").width - 32);
-  const [count, setCount] = useState(0);
 
   const {
-    userId,
     name,
     email,
     photo: userPhoto,
   } = useSelector((state) => state.verify);
 
   useEffect(() => {
-    readDataPosts(userId).then((snapshoot) => {
+    readDataPosts().then((snapshoot) => {
       snapshoot.forEach((item) => {
         if (!posts.find((newItem) => newItem.id === item.key)) {
           setPosts((prev) => prev.concat({ ...item.val(), id: item.key }));
@@ -48,48 +37,10 @@ const HomeScreen = ({ navigation, route }) => {
       </View>
       <FlatList
         data={posts}
+        showsVerticalScrollIndicator={false}
         keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => (
-          <View style={{ flex: 1, marginBottom: 30 }}>
-            <Image
-              style={{ ...styles.conteiner_img, width }}
-              borderRadius={8}
-              source={{ uri: item.photo }}
-            ></Image>
-            <Text style={styles.text_title}>{item.info.title}</Text>
-            <View
-              style={{
-                width: width,
-                flexDirection: "row",
-                justifyContent: "space-between",
-                alignItems: "flex-start",
-                marginTop: 8,
-              }}
-            >
-              <View style={styles.comment_conteiner}>
-                <Feather
-                  name="message-circle"
-                  size={21}
-                  color="#BDBDBD"
-                  style={{ marginRight: 7 }}
-                  onPress={() => navigation.navigate("Comment", item.id)}
-                />
-                <Text style={styles.count_comment}>0</Text>
-              </View>
-              <View style={styles.location_conteiner}>
-                <Feather
-                  style={{}}
-                  name="map-pin"
-                  size={18}
-                  color="#BDBDBD"
-                  onPress={() => navigation.navigate("Map", item.location)}
-                />
-                <Text style={{ marginLeft: 8, color: "#212121", fontSize: 16 }}>
-                  {item.info.location}
-                </Text>
-              </View>
-            </View>
-          </View>
+          <PostsItem navigation={navigation} item={item} />
         )}
       ></FlatList>
     </View>
@@ -128,29 +79,5 @@ const styles = StyleSheet.create({
     color: "rgba(33, 33, 33, 0.8)",
     fontSize: 13,
     lineHeight: 15,
-  },
-  conteiner_img: {
-    marginBottom: 8,
-    width: 343,
-    height: 250,
-  },
-  text_title: {
-    fontFamily: "Silvana-1",
-    fontSize: 16,
-    lineHeight: 19,
-    color: "#212121",
-    marginRight: "auto",
-  },
-  comment_conteiner: {
-    flexDirection: "row",
-  },
-  count_comment: {
-    fontSize: 15,
-    color: "#BDBDBD",
-  },
-  location_conteiner: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginLeft: 65,
   },
 });

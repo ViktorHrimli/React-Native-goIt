@@ -18,21 +18,21 @@ const uploadPostOnDataBase = async (post) => {
     userId: post.userId,
   };
 
-  const postListRef = ref(db, "posts/" + post.userId);
+  const postListRef = ref(db, "posts");
   const newPostRef = push(postListRef);
   set(newPostRef, json);
 };
 
-const readDataPosts = (userId) => {
+const readDataPosts = () => {
   const dbRef = ref(getDatabase());
 
-  return get(child(dbRef, `posts/${userId}`));
+  return get(child(dbRef, `posts`));
 };
 
 const uoloadComment = (comment, name, id, userId, date) => {
   const db = getDatabase();
 
-  const postListRef = ref(db, "posts/" + userId + `/${id}` + "/comment");
+  const postListRef = ref(db, `posts/${id}/comment`);
   const newPostRef = push(postListRef);
 
   set(newPostRef, {
@@ -45,6 +45,6 @@ const uoloadComment = (comment, name, id, userId, date) => {
 const readComment = (userId, id) => {
   const dbRef = ref(getDatabase());
 
-  return get(child(dbRef, `posts/${userId}/${id}/comment`));
+  return get(child(dbRef, `posts/${id}/comment`));
 };
 export { uploadPostOnDataBase, readDataPosts, uoloadComment, readComment };

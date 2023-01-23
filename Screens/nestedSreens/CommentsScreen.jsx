@@ -8,8 +8,6 @@ import {
   Text,
   View,
   StyleSheet,
-  SafeAreaView,
-  ScrollView,
   FlatList,
   Image,
   Dimensions,
@@ -27,7 +25,8 @@ const CommentsScreen = ({ route }) => {
 
   const { name, userId } = useSelector((state) => state.verify);
 
-  const id = route.params;
+  const { id, photo } = route.params;
+
   const date = new Date();
 
   const handleCreateComment = () => {
@@ -50,14 +49,15 @@ const CommentsScreen = ({ route }) => {
 
   return (
     <View style={styles.conteiner}>
-      <View style={styles.conteiner_posts}>
-        <Image
-          style={styles.image_posts}
-          source={require("../../assets/img/wood.jpg")}
-        ></Image>
-      </View>
       <FlatList
+        showsVerticalScrollIndicator={false}
         style={{ paddingTop: 32 }}
+        ListHeaderComponent={
+          <View style={styles.conteiner_posts}>
+            <Image style={styles.image_posts} source={{ uri: photo }} />
+          </View>
+        }
+        ListHeaderComponentStyle={{ marginBottom: 32 }}
         data={dataComment}
         keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => (
@@ -108,12 +108,10 @@ const styles = StyleSheet.create({
   },
   conteiner_posts: {
     width: WIDTH,
-    alignItems: "center",
-    justifyContent: "center",
   },
   image_posts: {
     width: WIDTH,
-    borderRadius: 6,
+    borderRadius: 8,
   },
   conteiner_comments: {
     flexDirection: "row",
