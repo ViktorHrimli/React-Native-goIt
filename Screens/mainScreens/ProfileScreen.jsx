@@ -20,6 +20,7 @@ const ProfileScreen = ({ navigation }) => {
   const { name, photo, userId } = useSelector((state) => state.verify);
 
   useEffect(() => {
+    console.log("refresh");
     readDataPosts().then((snapshoot) => {
       snapshoot.forEach((item) => {
         if (!posts.find((newItem) => newItem.id === item.key)) {
@@ -29,7 +30,7 @@ const ProfileScreen = ({ navigation }) => {
         }
       });
     });
-  }, []);
+  }, [navigation]);
 
   return (
     <ImageBackground

@@ -71,7 +71,7 @@ const MainTabsNav = () => {
                 paddingLeft: 20,
               }}
             >
-              <TouchableOpacity onPress={() => {}}>
+              <TouchableOpacity onPress={() => "asd"}>
                 <Ionicons name="arrow-back-outline" size={24} color="black" />
               </TouchableOpacity>
             </View>
@@ -105,9 +105,7 @@ const MainTabsNav = () => {
                 paddingLeft: 20,
               }}
             >
-              <TouchableOpacity
-                onPress={() => console.log("Return me back pls")}
-              >
+              <TouchableOpacity onPress={() => console.log()}>
                 <Ionicons name="arrow-back-outline" size={24} color="black" />
               </TouchableOpacity>
             </View>

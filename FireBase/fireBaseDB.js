@@ -5,7 +5,8 @@ import {
   get,
   push,
   child,
-  onValue,
+  update,
+  runTransaction,
 } from "firebase/database";
 
 const uploadPostOnDataBase = async (post) => {
@@ -29,7 +30,7 @@ const readDataPosts = () => {
   return get(child(dbRef, `posts`));
 };
 
-const uoloadComment = (comment, name, id, userId, date) => {
+const uploadComment = (comment, name, id, date, photo) => {
   const db = getDatabase();
 
   const postListRef = ref(db, `posts/${id}/comment`);
@@ -39,12 +40,35 @@ const uoloadComment = (comment, name, id, userId, date) => {
     name,
     comment,
     date,
+    photo,
   });
 };
 
-const readComment = (userId, id) => {
+const readComment = (id) => {
   const dbRef = ref(getDatabase());
 
   return get(child(dbRef, `posts/${id}/comment`));
 };
-export { uploadPostOnDataBase, readDataPosts, uoloadComment, readComment };
+
+const readStarCount = (id) => {
+  const dbRef = ref(getDatabase());
+
+  return get(child(dbRef, `posts/${id}/starCount`));
+};
+
+const updatePost = (id, userId) => {
+  const db = getDatabase();
+  const postRef = ref(db, `posts/${id}/starCount`);
+
+  const newPostRef = push(postRef);
+  set(newPostRef, { userId, countLikes: 1 });
+};
+
+export {
+  uploadPostOnDataBase,
+  readDataPosts,
+  uploadComment,
+  readComment,
+  updatePost,
+  readStarCount,
+};

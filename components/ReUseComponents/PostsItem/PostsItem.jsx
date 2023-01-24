@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from "react";
+import { useSelector } from "react-redux";
+
 import {
   ImageBackground,
   View,
@@ -10,20 +12,30 @@ import {
 import { Feather } from "@expo/vector-icons";
 
 import { getCountComments } from "../../../helpers";
+import { updatePost, readComment, readStarCount } from "../../../FireBase";
 
 const PostsItem = ({
   navigation,
-  item: { photo, id, location, info, comment },
+  item: { photo, id, location, info, comment, starCount },
 }) => {
-  // likes
+  // comment and likes
   const [countComments, setCountComments] = useState(0);
+  const [countLikes, setCountLikes] = useState(0);
+  const [isUpdate, setIsUpdate] = useState(false);
   // width
   const [width, setwidth] = useState(Dimensions.get("screen").width - 32);
 
+  const { userId } = useSelector((state) => state.verify);
+
+  const handleUploadLikes = () => {
+    updatePost(id, userId);
+    setIsUpdate((prev) => !prev);
+  };
+
   useEffect(() => {
-    setCountComments(getCountComments(comment));
-    return () => {};
-  }, []);
+    readStarCount(id).then(({ size }) => setCountLikes(size));
+    readComment(id).then(({ size }) => setCountComments(size));
+  }, [isUpdate]);
 
   return (
     <View style={{ marginVertical: 16 }}>
@@ -56,9 +68,9 @@ const PostsItem = ({
             name="thumbs-up"
             size={18}
             color="#FF6C00"
-            onPress={() => setcount((prev) => prev + 1)}
+            onPress={handleUploadLikes}
           />
-          <Text style={styles.count_comment}>{0}</Text>
+          <Text style={styles.count_comment}>{countLikes}</Text>
         </View>
         <View style={styles.location_conteiner}>
           <Feather

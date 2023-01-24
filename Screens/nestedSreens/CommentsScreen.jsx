@@ -15,7 +15,7 @@ import {
   TextInput,
 } from "react-native";
 
-import { uoloadComment, readComment } from "../../FireBase/fireBaseDB";
+import { readComment, uploadComment } from "../../FireBase/fireBaseDB";
 
 const CommentsScreen = ({ route }) => {
   const [widht, setWidht] = useState(Dimensions.get("window").width);
@@ -23,20 +23,23 @@ const CommentsScreen = ({ route }) => {
   const [dataComment, setDataComment] = useState([]);
   const [refresh, setRefresh] = useState(false);
 
-  const { name, userId } = useSelector((state) => state.verify);
+  const {
+    name,
+    userId,
+    photo: userPhoto,
+  } = useSelector((state) => state.verify);
 
   const { id, photo } = route.params;
-
   const date = new Date();
 
   const handleCreateComment = () => {
-    uoloadComment(comment, name, id, userId, date.toLocaleString());
+    uploadComment(comment, name, id, date.toLocaleString(), userPhoto);
     setRefresh((prev) => !prev);
     setComment("");
   };
 
   useEffect(() => {
-    readComment(userId, id).then((snapshot) => {
+    readComment(id).then((snapshot) => {
       snapshot.forEach((item) => {
         if (!dataComment.find((newItem) => newItem.id === item.key)) {
           setDataComment((prev) =>
@@ -45,7 +48,7 @@ const CommentsScreen = ({ route }) => {
         }
       });
     });
-  }, [refresh]);
+  }, [refresh, route.params]);
 
   return (
     <View style={styles.conteiner}>
@@ -63,7 +66,11 @@ const CommentsScreen = ({ route }) => {
         renderItem={({ item }) => (
           <View style={styles.conteiner_comments}>
             <Image
-              source={require("../../assets/img/photo_2022-12-27_02-15-19.jpg")}
+              source={{
+                uri: item.photo
+                  ? item.photo
+                  : "../../assets/img/photo_2022-12-27_02-15-19.jpg",
+              }}
               style={styles.user_photo}
             />
             <View style={styles.post}>
