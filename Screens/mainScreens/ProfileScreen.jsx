@@ -11,16 +11,18 @@ import {
 } from "react-native";
 
 import { readDataPosts } from "../../FireBase/index";
-
 import { PostsItem } from "../../components/ReUseComponents/PostsItem/PostsItem";
+import { AddButtonPhoto } from "../../components/ReUseComponents/AddRemoveButtonPhoto/AddPhoto";
+import { RemoveButtonPhoto } from "../../components/ReUseComponents/AddRemoveButtonPhoto/RemovePhoto";
 
 const ProfileScreen = ({ navigation }) => {
   const [posts, setPosts] = useState([]);
+  const [image, setImage] = useState(null);
 
   const { name, photo, userId } = useSelector((state) => state.verify);
+  const isRefresh = useSelector((state) => state.post);
 
   useEffect(() => {
-    console.log("refresh");
     readDataPosts().then((snapshoot) => {
       snapshoot.forEach((item) => {
         if (!posts.find((newItem) => newItem.id === item.key)) {
@@ -30,7 +32,7 @@ const ProfileScreen = ({ navigation }) => {
         }
       });
     });
-  }, [navigation]);
+  }, [isRefresh]);
 
   return (
     <ImageBackground
@@ -42,7 +44,13 @@ const ProfileScreen = ({ navigation }) => {
           borderRadius={16}
           source={{ uri: photo }}
           style={styles.conteiner_img}
-        ></ImageBackground>
+        >
+          {!photo ? (
+            <AddButtonPhoto setImage={setImage} />
+          ) : (
+            <RemoveButtonPhoto setImage={setImage} />
+          )}
+        </ImageBackground>
         <Text style={styles.title_name}>{name}</Text>
         <FlatList
           data={posts}

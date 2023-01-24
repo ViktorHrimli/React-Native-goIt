@@ -15,6 +15,7 @@ const HomeScreen = ({ navigation, route }) => {
     email,
     photo: userPhoto,
   } = useSelector((state) => state.verify);
+  const isRefresh = useSelector((state) => state.post);
 
   useEffect(() => {
     readDataPosts().then((snapshoot) => {
@@ -24,7 +25,7 @@ const HomeScreen = ({ navigation, route }) => {
         }
       });
     });
-  }, [route.params]);
+  }, [isRefresh, route.params]);
 
   return (
     <View style={styles.conteiner}>

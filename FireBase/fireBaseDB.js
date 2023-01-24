@@ -30,7 +30,7 @@ const readDataPosts = () => {
   return get(child(dbRef, `posts`));
 };
 
-const uploadComment = (comment, name, id, date, photo) => {
+const uploadComment = (comment, name, id, date, photo, userId) => {
   const db = getDatabase();
 
   const postListRef = ref(db, `posts/${id}/comment`);
@@ -41,6 +41,7 @@ const uploadComment = (comment, name, id, date, photo) => {
     comment,
     date,
     photo,
+    userId,
   });
 };
 

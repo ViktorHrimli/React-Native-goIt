@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 
 // icons
 import { AntDesign } from "@expo/vector-icons";
@@ -13,32 +13,43 @@ import {
   Dimensions,
   TouchableOpacity,
   TextInput,
+  ImageBackground,
 } from "react-native";
 
 import { readComment, uploadComment } from "../../FireBase/fireBaseDB";
+import { isUpdate } from "../../redux/post/postSlice";
 
 const CommentsScreen = ({ route }) => {
   const [widht, setWidht] = useState(Dimensions.get("window").width);
   const [comment, setComment] = useState("");
   const [dataComment, setDataComment] = useState([]);
   const [refresh, setRefresh] = useState(false);
-
+  const [prevId, setPrevId] = useState(id);
+  // hooks
   const {
     name,
-    userId,
     photo: userPhoto,
+    userId,
   } = useSelector((state) => state.verify);
+  const dispatch = useDispatch();
+  //
 
   const { id, photo } = route.params;
-  const date = new Date();
 
   const handleCreateComment = () => {
-    uploadComment(comment, name, id, date.toLocaleString(), userPhoto);
+    const date = new Date();
+    dispatch(isUpdate());
+
+    uploadComment(comment, name, id, date.toLocaleString(), userPhoto, userId);
     setRefresh((prev) => !prev);
     setComment("");
   };
 
   useEffect(() => {
+    if (id !== prevId) {
+      setPrevId(id);
+      setDataComment([]);
+    }
     readComment(id).then((snapshot) => {
       snapshot.forEach((item) => {
         if (!dataComment.find((newItem) => newItem.id === item.key)) {
@@ -49,35 +60,50 @@ const CommentsScreen = ({ route }) => {
       });
     });
   }, [refresh, route.params]);
-
   return (
     <View style={styles.conteiner}>
       <FlatList
         showsVerticalScrollIndicator={false}
-        style={{ paddingTop: 32 }}
         ListHeaderComponent={
-          <View style={styles.conteiner_posts}>
-            <Image style={styles.image_posts} source={{ uri: photo }} />
-          </View>
+          <Image style={styles.image_posts} source={{ uri: photo }} />
         }
-        ListHeaderComponentStyle={{ marginBottom: 32 }}
+        ListHeaderComponentStyle={{
+          borderRadius: 8,
+          marginBottom: 32,
+        }}
         data={dataComment}
         keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => (
-          <View style={styles.conteiner_comments}>
+          <View
+            style={{
+              marginBottom: 32,
+              flexDirection: item.user.name === name ? "row-reverse" : "row",
+            }}
+          >
             <Image
-              source={{
-                uri: item.photo
-                  ? item.photo
-                  : "../../assets/img/photo_2022-12-27_02-15-19.jpg",
+              source={require("../../assets/img/photo_2022-12-27_02-15-19.jpg")}
+              style={{
+                ...styles.user_photo,
+                marginLeft: item.user.name === name ? 10 : 0,
+                marginRight: item.user.name === name ? 0 : 10,
               }}
-              style={styles.user_photo}
             />
             <View style={styles.post}>
+              {item.user.name !== name && (
+                <Text style={styles.user_name}>{item.user.name}</Text>
+              )}
               <Text style={{ ...styles.post_message, width: widht - 100 }}>
                 {item.user.comment}
               </Text>
-              <Text style={styles.post_time}>{item.user.date}</Text>
+              <Text
+                style={{
+                  ...styles.post_time,
+                  marginRight: item.user.name === name ? "auto" : 0,
+                  marginLeft: item.user.name === name ? 0 : "auto",
+                }}
+              >
+                {item.user.date}
+              </Text>
             </View>
           </View>
         )}
@@ -113,16 +139,10 @@ const styles = StyleSheet.create({
     paddingTop: 32,
     paddingHorizontal: 16,
   },
-  conteiner_posts: {
-    width: WIDTH,
-  },
   image_posts: {
     width: WIDTH,
-    borderRadius: 8,
-  },
-  conteiner_comments: {
-    flexDirection: "row",
-    marginBottom: 32,
+    height: 250,
+    borderRadius: 6,
   },
   post: {
     padding: 16,
@@ -133,20 +153,26 @@ const styles = StyleSheet.create({
   post_message: {
     fontSize: 13,
     lineHeight: 18,
-
     color: "#212121",
   },
   post_time: {
     fontSize: 10,
     lineHeight: 12,
-    marginLeft: "auto",
     color: "#BDBDBD",
   },
   user_photo: {
+    position: "relative",
+
     width: 28,
     height: 28,
     borderRadius: 50,
-    marginRight: 10,
+  },
+  user_name: {
+    position: "absolute",
+    color: "blue",
+    fontWeight: "500",
+    top: -3,
+    left: 4,
   },
   create_comment: {
     position: "relative",

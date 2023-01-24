@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 
 import {
   ImageBackground,
@@ -11,8 +11,8 @@ import {
 
 import { Feather } from "@expo/vector-icons";
 
-import { getCountComments } from "../../../helpers";
 import { updatePost, readComment, readStarCount } from "../../../FireBase";
+import { isUpdate, updateOff } from "../../../redux/post/postSlice";
 
 const PostsItem = ({
   navigation,
@@ -21,21 +21,23 @@ const PostsItem = ({
   // comment and likes
   const [countComments, setCountComments] = useState(0);
   const [countLikes, setCountLikes] = useState(0);
-  const [isUpdate, setIsUpdate] = useState(false);
   // width
   const [width, setwidth] = useState(Dimensions.get("screen").width - 32);
-
+  // hooks
+  const dispatch = useDispatch();
   const { userId } = useSelector((state) => state.verify);
+  const isRefresh = useSelector((state) => state.post);
 
+  //
   const handleUploadLikes = () => {
     updatePost(id, userId);
-    setIsUpdate((prev) => !prev);
+    dispatch(isUpdate());
   };
 
   useEffect(() => {
     readStarCount(id).then(({ size }) => setCountLikes(size));
     readComment(id).then(({ size }) => setCountComments(size));
-  }, [isUpdate]);
+  }, [isRefresh]);
 
   return (
     <View style={{ marginVertical: 16 }}>
@@ -58,7 +60,9 @@ const PostsItem = ({
             size={21}
             color="#FF6C00"
             style={{ marginRight: 7 }}
-            onPress={() => navigation.navigate("Comment", { id, photo })}
+            onPress={() =>
+              navigation.navigate("Comment", { id, photo, comment })
+            }
           />
           <Text style={styles.count_comment}>{countComments}</Text>
         </View>

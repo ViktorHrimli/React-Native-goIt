@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 // icons
 import { Feather } from "@expo/vector-icons";
 import { FontAwesome } from "@expo/vector-icons";
@@ -16,6 +16,7 @@ import {
 } from "react-native";
 
 import { uploadPhonoInStorage, uploadPostOnDataBase } from "../../FireBase";
+import { isUpdate } from "../../redux/post/postSlice";
 
 const initialState = {
   title: "",
@@ -26,8 +27,10 @@ const FormPost = ({ navigation, photo }) => {
   const [input, setInput] = useState(initialState);
   const [isShowKeyboard, setIsShowKeyboard] = useState(false);
   const [location, setLocation] = useState(null);
-
+  // hooks
   const { userId, name } = useSelector((state) => state.verify);
+  const dispatch = useDispatch();
+  //
   // width
   const [dimension, setDimension] = useState(
     Dimensions.get("window").width - 20 * 2
@@ -39,6 +42,7 @@ const FormPost = ({ navigation, photo }) => {
   };
 
   const onHandleSubmit = async () => {
+    dispatch(isUpdate());
     // upload file in storage
     const newPhoto = await uploadPhonoInStorage(photo);
     // upload post on DB
