@@ -1,4 +1,7 @@
 import React, { useState, useEffect } from "react";
+import { useDispatch } from "react-redux";
+// icons
+
 import {
   ImageBackground,
   View,
@@ -10,9 +13,16 @@ import {
   Keyboard,
   TouchableWithoutFeedback,
   Dimensions,
+  Image,
 } from "react-native";
 
 import { styles } from "./Reg.styled";
+
+import { authSignUp } from "../../redux/auth/authOperations";
+// components
+
+import { AddButtonPhoto } from "../../components/ReUseComponents/AddRemoveButtonPhoto/AddPhoto";
+import { RemoveButtonPhoto } from "../../components/ReUseComponents/AddRemoveButtonPhoto/RemovePhoto";
 
 const initialState = {
   name: "",
@@ -22,20 +32,21 @@ const initialState = {
 
 const RegistrationsScreen = ({ navigation }) => {
   const [isShowKeyboard, setIsShowKeyboard] = useState(false);
+  const [image, setImage] = useState(null);
   const [input, setInput] = useState(initialState);
+
+  const dispatch = useDispatch();
 
   const [dimension, setDimension] = useState(
     Dimensions.get("window").width - 20 * 2
   );
 
-  const handleFocuse = () => {
+  const handleSubmit = () => {
     Keyboard.dismiss();
     setIsShowKeyboard(false);
 
-    console.log(input);
+    dispatch(authSignUp({ ...input, photo: image }));
     setInput(() => initialState);
-
-    // navigation.jumpTo("Home");
   };
 
   useEffect(() => {
@@ -58,8 +69,24 @@ const RegistrationsScreen = ({ navigation }) => {
         style={styles.img}
       >
         <View
-          style={{ ...styles.conteinerImg, top: isShowKeyboard ? 30 : 220 }}
-        ></View>
+          style={{
+            ...styles.conteinerImg,
+            top: isShowKeyboard ? 30 : 230,
+            backgroundColor: image ? "#F6F6F6" : "#F6F6F6",
+          }}
+        >
+          {!image ? (
+            <AddButtonPhoto setImage={setImage} />
+          ) : (
+            <RemoveButtonPhoto setImage={setImage} />
+          )}
+          {image && (
+            <Image
+              source={{ uri: image }}
+              style={{ width: "100%", height: "100%", borderRadius: 16 }}
+            />
+          )}
+        </View>
         <View style={{ ...styles.conteiner, flex: isShowKeyboard ? 0.8 : 0.6 }}>
           <Text style={styles.titleText}>Registration</Text>
           <KeyboardAvoidingView
@@ -109,7 +136,7 @@ const RegistrationsScreen = ({ navigation }) => {
                   }
                 />
               </View>
-              <TouchableOpacity style={styles.button} onPress={handleFocuse}>
+              <TouchableOpacity style={styles.button} onPress={handleSubmit}>
                 <Text style={styles.buttonText}>Send</Text>
               </TouchableOpacity>
               <View style={{ alignItems: "center", marginTop: 10 }}>

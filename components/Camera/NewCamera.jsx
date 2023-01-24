@@ -19,7 +19,7 @@ export default function CameraScreen() {
   const cameraRef = useRef();
   useEffect(() => {
     (async () => {
-      const { status } = await Camera.requestPermissionsAsync();
+      const { status } = await Camera.requestCameraPermissionsAsync();
       setHasPermission(status === "granted");
     })();
   }, []);

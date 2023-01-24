@@ -1,79 +1,47 @@
 import React, { useState, useEffect } from "react";
-import { Feather } from "@expo/vector-icons";
+import { useSelector } from "react-redux";
 
-import {
-  Text,
-  View,
-  StyleSheet,
-  Image,
-  Dimensions,
-  FlatList,
-} from "react-native";
+import { Text, View, StyleSheet, Image, FlatList } from "react-native";
+
+import { readDataPosts } from "../../FireBase";
+
+import { PostsItem } from "../../components/ReUseComponents/PostsItem/PostsItem";
 
 const HomeScreen = ({ navigation, route }) => {
   const [posts, setPosts] = useState([]);
-  const [width, setwidth] = useState(Dimensions.get("screen").width - 32);
-  const [count, setCount] = useState(0);
+
+  const {
+    name,
+    email,
+    photo: userPhoto,
+  } = useSelector((state) => state.verify);
+  const isRefresh = useSelector((state) => state.post);
 
   useEffect(() => {
-    if (route.params) {
-      setPosts((prev) => [...prev, route.params]);
-    }
-  }, [route.params]);
+    readDataPosts().then((snapshoot) => {
+      snapshoot.forEach((item) => {
+        if (!posts.find((newItem) => newItem.id === item.key)) {
+          setPosts((prev) => prev.concat({ ...item.val(), id: item.key }));
+        }
+      });
+    });
+  }, [isRefresh, route.params]);
+
   return (
     <View style={styles.conteiner}>
       <View style={styles.profile_conteiner}>
-        <Image
-          style={styles.image}
-          source={require("../../assets/img/photo_2022-12-27_02-15-19.jpg")}
-        />
+        <Image style={styles.image} source={{ uri: userPhoto }} />
         <View style={{ marginLeft: 8 }}>
-          <Text style={styles.name}>Viktor Hrimli</Text>
-          <Text style={styles.email}>ViktorHrimli@gmail.com</Text>
+          <Text style={styles.name}>{name}</Text>
+          <Text style={styles.email}>{email}</Text>
         </View>
       </View>
       <FlatList
         data={posts}
-        keyExtractor={(_, idx) => idx.toString()}
+        showsVerticalScrollIndicator={false}
+        keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => (
-          <View style={{ flex: 1 }}>
-            <Image
-              style={{ ...styles.conteiner_img, width }}
-              borderRadius={8}
-              source={{ uri: item.photo }}
-            ></Image>
-            <Text style={styles.text_title}>{item.input.title}</Text>
-            <View
-              style={{
-                flexDirection: "row",
-                alignItems: "flex-end",
-                marginTop: 8,
-              }}
-            >
-              <View style={styles.comment_conteiner}>
-                <Feather
-                  name="message-circle"
-                  size={21}
-                  color="#BDBDBD"
-                  style={{ marginRight: 7 }}
-                  onPress={() => navigation.navigate("Comment")}
-                />
-                <Text style={styles.count_comment}>0</Text>
-              </View>
-              <View style={styles.location_conteiner}>
-                <Feather
-                  style={{}}
-                  name="map-pin"
-                  size={18}
-                  color="#BDBDBD"
-                  onPress={() => navigation.navigate("Map", item.location)}
-                />
-                <Text style={{ marginLeft: 8, color: "#212121", fontSize: 16 }}>
-                  {item.input.location}
-                </Text>
-              </View>
-            </View>
-          </View>
+          <PostsItem navigation={navigation} item={item} />
         )}
       ></FlatList>
     </View>
@@ -112,29 +80,5 @@ const styles = StyleSheet.create({
     color: "rgba(33, 33, 33, 0.8)",
     fontSize: 13,
     lineHeight: 15,
-  },
-  conteiner_img: {
-    marginBottom: 8,
-    width: 343,
-    height: 250,
-  },
-  text_title: {
-    fontFamily: "Silvana-1",
-    fontSize: 16,
-    lineHeight: 19,
-    color: "#212121",
-    marginRight: "auto",
-  },
-  comment_conteiner: {
-    flexDirection: "row",
-  },
-  count_comment: {
-    fontSize: 15,
-    color: "#BDBDBD",
-  },
-  location_conteiner: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginLeft: 65,
   },
 });

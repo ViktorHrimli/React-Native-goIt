@@ -3,8 +3,6 @@ import { Camera, CameraType } from "expo-camera";
 import { MaterialIcons } from "@expo/vector-icons";
 import { Ionicons } from "@expo/vector-icons";
 
-import * as Location from "expo-location";
-
 import {
   Text,
   View,
@@ -18,9 +16,10 @@ import {
 import FormPost from "../../components/FormPost/FormPost";
 
 const PostsScreen = ({ navigation }) => {
-  const [location, setLocation] = useState(null);
   const [errorMsg, setErrorMsg] = useState(null);
   const [hasPermission, setHasPermission] = useState(null);
+  // premissions state
+
   const [type, setType] = useState(CameraType.back);
   const [photo, setphoto] = useState(null);
   const [cameraReady, setCameraReady] = useState(false);
@@ -28,37 +27,17 @@ const PostsScreen = ({ navigation }) => {
 
   const cameraRef = useRef(null);
 
-  useEffect(() => {
-    (async () => {
-      const { status } = await Camera.requestCameraPermissionsAsync();
-      setHasPermission(status === "granted");
-    })();
-  }, []);
-
-  useEffect(() => {
-    (async () => {
-      let { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== "granted") {
-        setErrorMsg("Permission to access location was denied");
-        return;
-      }
-    })();
-  }, []);
-
-  const onCameraReady = () => {
-    setCameraReady(true);
-  };
-
   const takeSnap = async () => {
     if (cameraRef.current) {
-      const data = await cameraRef.current.takePictureAsync();
-      let location = await Location.getCurrentPositionAsync({});
+      const options = { quality: 0.5, base64: true, skipProcessing: true };
+
+      const data = await cameraRef.current.takePictureAsync(options);
       const source = data.uri;
-      setLocation(location);
       setphoto(source);
 
+      // show preview
       if (source) {
-        await cameraRef.current.pausePreview();
+        cameraRef.current.pausePreview();
         setIsPreview(true);
       }
     }
@@ -66,6 +45,7 @@ const PostsScreen = ({ navigation }) => {
 
   const cancelPreview = async () => {
     await cameraRef.current.resumePreview();
+
     setIsPreview(false);
   };
 
@@ -74,12 +54,14 @@ const PostsScreen = ({ navigation }) => {
       prev === CameraType.back ? CameraType.front : CameraType.back
     );
 
-  if (hasPermission === null) {
-    return <View />;
-  }
-  if (hasPermission === false) {
-    return <Text style={styles.text}>No access to camera</Text>;
-  }
+  // +================================ PREMISSIONS
+
+  useEffect(() => {
+    (async () => {
+      const { status } = await Camera.requestCameraPermissionsAsync();
+      setHasPermission(status === "granted");
+    })();
+  }, []);
 
   return (
     <ScrollView>
@@ -88,8 +70,7 @@ const PostsScreen = ({ navigation }) => {
           ref={cameraRef}
           type={type}
           style={styles.conteiner_skeleton}
-          flashMode={Camera.Constants.FlashMode.on}
-          onCameraReady={onCameraReady}
+          onCameraReady={() => setCameraReady(true)}
           onMountError={(error) => {
             console.log("camera error", error);
           }}
@@ -118,7 +99,7 @@ const PostsScreen = ({ navigation }) => {
         </Camera>
 
         <Text style={styles.text_addPhotot}>Upload photo</Text>
-        <FormPost navigation={navigation} photo={photo} location={location} />
+        <FormPost navigation={navigation} photo={photo} />
       </SafeAreaView>
     </ScrollView>
   );

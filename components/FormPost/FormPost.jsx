@@ -1,6 +1,10 @@
 import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+// icons
 import { Feather } from "@expo/vector-icons";
 import { FontAwesome } from "@expo/vector-icons";
+
+import * as Location from "expo-location";
 
 import {
   Text,
@@ -11,21 +15,48 @@ import {
   TouchableOpacity,
 } from "react-native";
 
+import { uploadPhonoInStorage, uploadPostOnDataBase } from "../../FireBase";
+import { isUpdate } from "../../redux/post/postSlice";
+
 const initialState = {
   title: "",
   location: "",
 };
 
-const FormPost = ({ navigation, photo, location }) => {
+const FormPost = ({ navigation, photo }) => {
   const [input, setInput] = useState(initialState);
   const [isShowKeyboard, setIsShowKeyboard] = useState(false);
+  const [location, setLocation] = useState(null);
+  // hooks
+  const { userId, name } = useSelector((state) => state.verify);
+  const dispatch = useDispatch();
+  //
+  // width
   const [dimension, setDimension] = useState(
     Dimensions.get("window").width - 20 * 2
   );
 
-  const onHandleSubmit = () => {
-    navigation.navigate("Home", { input, photo, location });
+  const handleLocation = async () => {
+    let location = await Location.getCurrentPositionAsync({});
+    setLocation(location);
+  };
+
+  const onHandleSubmit = async () => {
+    dispatch(isUpdate());
+    // upload file in storage
+    const newPhoto = await uploadPhonoInStorage(photo);
+    // upload post on DB
+    uploadPostOnDataBase({
+      input,
+      newPhoto,
+      location: location.coords,
+      userId,
+      name,
+    });
+
     setInput(initialState);
+
+    navigation.navigate("Home", "wd");
   };
 
   useEffect(() => {
@@ -35,6 +66,16 @@ const FormPost = ({ navigation, photo, location }) => {
     };
     Dimensions.addEventListener("change", onChange);
   });
+
+  useEffect(() => {
+    (async () => {
+      let { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== "granted") {
+        setErrorMsg("Permission to access location was denied");
+        return;
+      }
+    })();
+  }, []);
 
   return (
     <View style={{ ...styles.form, width: dimension - 20 * 2 }}>
@@ -60,6 +101,7 @@ const FormPost = ({ navigation, photo, location }) => {
           style={{ ...styles.input, paddingLeft: 24 }}
           placeholder="Location"
           onFocus={() => setIsShowKeyboard(true)}
+          onPressOut={handleLocation}
           value={input.location}
           onChangeText={(value) =>
             setInput((prev) => ({ ...prev, location: value }))
