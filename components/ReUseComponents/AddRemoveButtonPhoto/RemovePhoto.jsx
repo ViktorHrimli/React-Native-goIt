@@ -2,10 +2,8 @@ import React, { useState } from "react";
 import { Ionicons } from "@expo/vector-icons";
 import { TouchableWithoutFeedback, View } from "react-native";
 
-const RemoveButtonPhoto = ({ setImage }) => {
-  const onClickRemove = () => {
-    setImage(null);
-  };
+const RemoveButtonPhoto = () => {
+  const onClickRemove = () => {};
   return (
     <View style={{ position: "absolute", zIndex: 200, right: -14, bottom: 15 }}>
       <TouchableWithoutFeedback onPress={onClickRemove}>

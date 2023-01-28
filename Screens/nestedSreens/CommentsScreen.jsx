@@ -13,7 +13,6 @@ import {
   Dimensions,
   TouchableOpacity,
   TextInput,
-  ImageBackground,
 } from "react-native";
 
 import { readComment, uploadComment } from "../../FireBase/fireBaseDB";
@@ -52,6 +51,7 @@ const CommentsScreen = ({ route }) => {
     }
     readComment(id).then((snapshot) => {
       snapshot.forEach((item) => {
+        console.log(item);
         if (!dataComment.find((newItem) => newItem.id === item.key)) {
           setDataComment((prev) =>
             prev.concat({ user: item.val(), id: item.key })
@@ -81,7 +81,7 @@ const CommentsScreen = ({ route }) => {
             }}
           >
             <Image
-              source={require("../../assets/img/photo_2022-12-27_02-15-19.jpg")}
+              source={{ uri: item.user.photo }}
               style={{
                 ...styles.user_photo,
                 marginLeft: item.user.name === name ? 10 : 0,

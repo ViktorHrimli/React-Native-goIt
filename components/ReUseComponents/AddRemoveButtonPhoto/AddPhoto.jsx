@@ -1,11 +1,20 @@
-import React, { useState } from "react";
+import React from "react";
+import { useDispatch } from "react-redux";
+
 import { Ionicons } from "@expo/vector-icons";
 import { TouchableWithoutFeedback, View } from "react-native";
+
+import { authUpdateProfile } from "../../../redux/auth/authOperations";
+
 import { getImageFromGallery } from "../../../helpers";
+import { uploadPhonoInStorage } from "../../../FireBase";
 
 const AddButtonPhoto = ({ setImage }) => {
+  const dispatch = useDispatch();
   const onClickAdd = async () => {
-    setImage(await getImageFromGallery());
+    const refPhoto = await uploadPhonoInStorage(await getImageFromGallery());
+    setImage(refPhoto);
+    // dispatch(authUpdateProfile(refPhoto));
   };
   return (
     <View style={{ position: "absolute", zIndex: 200, right: -14, bottom: 15 }}>

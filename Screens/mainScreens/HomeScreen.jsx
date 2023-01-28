@@ -15,8 +15,8 @@ const HomeScreen = ({ navigation, route }) => {
     email,
     photo: userPhoto,
   } = useSelector((state) => state.verify);
-  const isRefresh = useSelector((state) => state.post);
 
+  const isRefresh = useSelector((state) => state.post);
   useEffect(() => {
     readDataPosts().then((snapshoot) => {
       snapshoot.forEach((item) => {

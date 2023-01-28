@@ -69,4 +69,25 @@ const authStateChanged = () => async (dispatch, getState) => {
   }
 };
 
-export { authSignIn, authSignUp, authSignOut, authStateChanged };
+const authUpdateProfile =
+  ({ photo }) =>
+  async (dispatch, getState) => {
+    try {
+      updateProfile(auth.currentUser, {
+        photoURL: photo,
+      }).then(console.log("Updated photo"));
+
+      dispatch(updateUserPhoto(photo));
+    } catch (error) {
+      console.log(error);
+      console.log(error.message);
+    }
+  };
+
+export {
+  authSignIn,
+  authSignUp,
+  authSignOut,
+  authStateChanged,
+  authUpdateProfile,
+};

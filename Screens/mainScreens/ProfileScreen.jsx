@@ -17,7 +17,6 @@ import { RemoveButtonPhoto } from "../../components/ReUseComponents/AddRemoveBut
 
 const ProfileScreen = ({ navigation }) => {
   const [posts, setPosts] = useState([]);
-  const [image, setImage] = useState(null);
 
   const { name, photo, userId } = useSelector((state) => state.verify);
   const isRefresh = useSelector((state) => state.post);
@@ -45,19 +44,7 @@ const ProfileScreen = ({ navigation }) => {
           source={{ uri: photo }}
           style={styles.conteiner_img}
         >
-          {/* <View
-            style={{
-              backgroundColor: "#F6F6F6",
-              borderRadius: 16,
-              width: 120,
-              height: 120,
-            }}
-          ></View> */}
-          {!photo ? (
-            <AddButtonPhoto setImage={setImage} />
-          ) : (
-            <RemoveButtonPhoto setImage={setImage} />
-          )}
+          {!photo ? <AddButtonPhoto /> : <RemoveButtonPhoto />}
         </ImageBackground>
         <Text style={styles.title_name}>{name}</Text>
         <FlatList

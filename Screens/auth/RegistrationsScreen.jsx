@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useReducer } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 // icons
 
 import {
@@ -51,8 +51,8 @@ const reducerInput = (state, actions) => {
 
 const RegistrationsScreen = ({ navigation }) => {
   const [isShowKeyboard, setIsShowKeyboard] = useState(false);
-  const [image, setImage] = useState(null);
   const [input, setInput] = useState(initialState);
+  const [image, setImage] = useState(null);
   const [isValidName, setIsValidName] = useState(true);
   const [isValidEmail, setIsValidEmail] = useState(true);
   const [isValidPassword, setIsValidPassword] = useState(true);
@@ -104,8 +104,9 @@ const RegistrationsScreen = ({ navigation }) => {
           {!image ? (
             <AddButtonPhoto setImage={setImage} />
           ) : (
-            <RemoveButtonPhoto setImage={setImage} />
+            <RemoveButtonPhoto />
           )}
+
           {image && (
             <Image
               source={{ uri: image }}

@@ -19,6 +19,10 @@ const authSlice = createSlice({
       email: payload.email,
       photo: payload.photoURL,
     }),
+    updateUserPhoto: (state, { payload }) => ({
+      ...state,
+      photo: payload,
+    }),
     stateChangeUser: (state, { payload }) => ({
       ...state,
       stateChange: payload,
@@ -27,6 +31,6 @@ const authSlice = createSlice({
   },
 });
 
-export const { saveUserProfile, stateChangeUser, logOutUser } =
+export const { saveUserProfile, stateChangeUser, logOutUser, updateUserPhoto } =
   authSlice.actions;
 export const authReducer = authSlice.reducer;
