@@ -1,4 +1,10 @@
 import { getImageFromGallery } from "./imagePicker";
 import { getCountComments } from "./getCountComments";
-
-export { getImageFromGallery, getCountComments };
+import { validateName, validateEmail, validationPassword } from "./validation";
+export {
+  getImageFromGallery,
+  getCountComments,
+  validateName,
+  validateEmail,
+  validationPassword,
+};

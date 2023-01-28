@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useReducer } from "react";
 import { useDispatch } from "react-redux";
 
 import {
@@ -14,17 +14,38 @@ import {
   Dimensions,
 } from "react-native";
 
+import { ErrorText } from "../../components/ReUseComponents/ErrorText/ErrorText";
+
 import { styles } from "./Log.styled";
 import { authSignIn } from "../../redux/auth/authOperations";
+import { validateEmail, validationPassword } from "../../helpers";
 
 const initialState = {
   email: "",
   password: "",
 };
 
+const reducerInput = (state, actions) => {
+  switch (actions.type) {
+    case "Email": {
+      return { ...state, email: actions.payload };
+    }
+    case "Password": {
+      return { ...state, password: actions.payload };
+    }
+    default: {
+      return state;
+    }
+  }
+};
+
 const LoginScreen = ({ navigation }) => {
   const [isShowKeyboard, setIsShowKeyboard] = useState(false);
   const [input, setInput] = useState(initialState);
+  const [isValidEmail, setIsValidEmail] = useState(true);
+  const [isValidPassword, setIsValidPassword] = useState(true);
+
+  const [state, onDispatch] = useReducer(reducerInput, initialState);
 
   const dispatch = useDispatch();
 
@@ -33,12 +54,16 @@ const LoginScreen = ({ navigation }) => {
   );
 
   const handleLogin = () => {
-    Keyboard.dismiss();
-    setIsShowKeyboard(false);
+    if (isValidEmail && isValidPassword && input.email) {
+      Keyboard.dismiss();
+      setIsShowKeyboard(false);
 
-    dispatch(authSignIn(input));
+      dispatch(authSignIn(input));
 
-    setInput(() => initialState);
+      setInput(() => initialState);
+    } else {
+      console.log("Empty fields");
+    }
   };
 
   useEffect(() => {
@@ -68,28 +93,58 @@ const LoginScreen = ({ navigation }) => {
             <View style={{ ...styles.form, width: dimension - 20 * 2 }}>
               <View>
                 <TextInput
-                  style={styles.input}
+                  style={{
+                    ...styles.input,
+                    borderColor: state.email ? "#FF6C00" : "#e8e8e8",
+                  }}
                   placeholder="Email"
+                  onBlur={() => {
+                    onDispatch({ type: "Email", payload: false });
+                  }}
                   value={input.email}
-                  onChangeText={(value) =>
-                    setInput((prev) => ({ ...prev, email: value }))
-                  }
-                  onFocus={() => setIsShowKeyboard(true)}
+                  onFocus={() => {
+                    onDispatch({ type: "Email", payload: true });
+                    setIsShowKeyboard(true);
+                  }}
+                  onChangeText={(value) => {
+                    validateEmail(value, setIsValidEmail);
+                    setInput((prev) => ({ ...prev, email: value }));
+                  }}
                 />
+                {!isValidEmail ? <ErrorText text="Email invalid!" /> : ""}
               </View>
               <View>
                 <TextInput
-                  style={styles.input}
+                  style={{
+                    ...styles.input,
+                    borderColor: state.password ? "#FF6C00" : "#e8e8e8",
+                  }}
                   placeholder="Password"
-                  value={input.password}
+                  onBlur={() => {
+                    onDispatch({ type: "Password", payload: false });
+                  }}
                   secureTextEntry={true}
-                  onChangeText={(value) =>
-                    setInput((prev) => ({ ...prev, password: value }))
-                  }
-                  onFocus={() => setIsShowKeyboard(true)}
+                  value={input.password}
+                  onFocus={() => {
+                    onDispatch({ type: "Password", payload: true });
+                    setIsShowKeyboard(true);
+                  }}
+                  onChangeText={(value) => {
+                    validationPassword(value, setIsValidPassword);
+                    setInput((prev) => ({ ...prev, password: value }));
+                  }}
                 />
+                {!isValidPassword ? (
+                  <ErrorText text="Password should be example (Xx2$xxxx) at 8 character!" />
+                ) : (
+                  ""
+                )}
               </View>
-              <TouchableOpacity style={styles.button} onPress={handleLogin}>
+              <TouchableOpacity
+                disabled={!isValidPassword}
+                style={styles.button}
+                onPress={handleLogin}
+              >
                 <Text style={styles.buttonText}>Send</Text>
               </TouchableOpacity>
               <View style={{ alignItems: "center", marginTop: 10 }}>

@@ -19,10 +19,12 @@ import {
 import { styles } from "./Reg.styled";
 
 import { authSignUp } from "../../redux/auth/authOperations";
+import { validateName, validateEmail, validationPassword } from "../../helpers";
 // components
 
 import { AddButtonPhoto } from "../../components/ReUseComponents/AddRemoveButtonPhoto/AddPhoto";
 import { RemoveButtonPhoto } from "../../components/ReUseComponents/AddRemoveButtonPhoto/RemovePhoto";
+import { ErrorText } from "../../components/ReUseComponents/ErrorText/ErrorText";
 
 const initialState = {
   name: "",
@@ -51,6 +53,9 @@ const RegistrationsScreen = ({ navigation }) => {
   const [isShowKeyboard, setIsShowKeyboard] = useState(false);
   const [image, setImage] = useState(null);
   const [input, setInput] = useState(initialState);
+  const [isValidName, setIsValidName] = useState(true);
+  const [isValidEmail, setIsValidEmail] = useState(true);
+  const [isValidPassword, setIsValidPassword] = useState(true);
   const [state, onDispatch] = useReducer(reducerInput, initialState);
   const dispatch = useDispatch();
 
@@ -59,11 +64,15 @@ const RegistrationsScreen = ({ navigation }) => {
   );
 
   const handleSubmit = () => {
-    Keyboard.dismiss();
-    setIsShowKeyboard(false);
+    if (isValidName && isValidEmail && isValidPassword && input.email) {
+      Keyboard.dismiss();
+      setIsShowKeyboard(false);
 
-    dispatch(authSignUp({ ...input, photo: image }));
-    setInput(() => initialState);
+      dispatch(authSignUp({ ...input, photo: image }));
+      setInput(() => initialState);
+    } else {
+      console.log("empty field");
+    }
   };
 
   useEffect(() => {
@@ -116,20 +125,26 @@ const RegistrationsScreen = ({ navigation }) => {
                     ...styles.input,
                     borderColor: state.name ? "#FF6C00" : "#e8e8e8",
                   }}
-                  placeholder={state.name === true ? "" : "Name"}
+                  placeholder={"Name"}
                   onBlur={() => {
                     onDispatch({ type: "Name", payload: false });
                   }}
-                  secureTextEntry={true}
                   value={input.name}
                   onFocus={() => {
                     onDispatch({ type: "Name", payload: true });
                     setIsShowKeyboard(true);
                   }}
-                  onChangeText={(value) =>
-                    setInput((prev) => ({ ...prev, name: value }))
-                  }
+                  onChangeText={(value) => {
+                    validateName(value, setIsValidName);
+                    setInput((prev) => ({ ...prev, name: value }));
+                  }}
                 />
+
+                {!isValidName ? (
+                  <ErrorText text="Name is required and at least 8 characters!" />
+                ) : (
+                  ""
+                )}
               </View>
               <View>
                 <TextInput
@@ -137,29 +152,30 @@ const RegistrationsScreen = ({ navigation }) => {
                     ...styles.input,
                     borderColor: state.email ? "#FF6C00" : "#e8e8e8",
                   }}
-                  placeholder={state.email ? "" : "Email"}
+                  placeholder={"Email"}
                   onBlur={() => {
                     onDispatch({ type: "Email", payload: false });
                   }}
-                  secureTextEntry={true}
                   value={input.email}
                   onFocus={() => {
                     onDispatch({ type: "Email", payload: true });
                     setIsShowKeyboard(true);
                   }}
-                  onChangeText={(value) =>
-                    setInput((prev) => ({ ...prev, email: value }))
-                  }
+                  onChangeText={(value) => {
+                    validateEmail(value, setIsValidEmail);
+                    setInput((prev) => ({ ...prev, email: value }));
+                  }}
                 />
+                {!isValidEmail ? <ErrorText text="Email invalid!" /> : ""}
               </View>
-
               <View>
                 <TextInput
                   style={{
                     ...styles.input,
                     borderColor: state.password ? "#FF6C00" : "#e8e8e8",
                   }}
-                  placeholder={state.password ? "" : "Password"}
+                  placeholder={"Password"}
+                  passwordRules={{ minlenght: 8 }}
                   onBlur={() => {
                     onDispatch({ type: "Password", payload: false });
                   }}
@@ -169,12 +185,24 @@ const RegistrationsScreen = ({ navigation }) => {
                     onDispatch({ type: "Password", payload: true });
                     setIsShowKeyboard(true);
                   }}
-                  onChangeText={(value) =>
-                    setInput((prev) => ({ ...prev, password: value }))
-                  }
+                  onChangeText={(value) => {
+                    setInput((prev) => ({ ...prev, password: value }));
+                    validationPassword(value, setIsValidPassword);
+                  }}
                 />
+
+                {!isValidPassword ? (
+                  <ErrorText text="Password should be example (Xx2$xxxx) at 8 character!" />
+                ) : (
+                  ""
+                )}
               </View>
-              <TouchableOpacity style={styles.button} onPress={handleSubmit}>
+              <TouchableOpacity
+                touchSoundDisabled={true}
+                disabled={!isValidPassword}
+                style={styles.button}
+                onPress={handleSubmit}
+              >
                 <Text style={styles.buttonText}>Send</Text>
               </TouchableOpacity>
               <View style={{ alignItems: "center", marginTop: 10 }}>
