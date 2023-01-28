@@ -99,7 +99,11 @@ const PostsScreen = ({ navigation }) => {
         </Camera>
 
         <Text style={styles.text_addPhotot}>Upload photo</Text>
-        <FormPost navigation={navigation} photo={photo} />
+        <FormPost
+          navigation={navigation}
+          photo={photo}
+          cancelPrev={cancelPreview}
+        />
       </SafeAreaView>
     </ScrollView>
   );

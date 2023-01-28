@@ -45,6 +45,14 @@ const ProfileScreen = ({ navigation }) => {
           source={{ uri: photo }}
           style={styles.conteiner_img}
         >
+          {/* <View
+            style={{
+              backgroundColor: "#F6F6F6",
+              borderRadius: 16,
+              width: 120,
+              height: 120,
+            }}
+          ></View> */}
           {!photo ? (
             <AddButtonPhoto setImage={setImage} />
           ) : (

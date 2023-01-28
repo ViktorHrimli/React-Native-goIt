@@ -23,7 +23,7 @@ const initialState = {
   location: "",
 };
 
-const FormPost = ({ navigation, photo }) => {
+const FormPost = ({ navigation, photo, cancelPrev }) => {
   const [input, setInput] = useState(initialState);
   const [isShowKeyboard, setIsShowKeyboard] = useState(false);
   const [location, setLocation] = useState(null);
@@ -39,6 +39,11 @@ const FormPost = ({ navigation, photo }) => {
   const handleLocation = async () => {
     let location = await Location.getCurrentPositionAsync({});
     setLocation(location);
+  };
+
+  const hanldeClearSubmit = () => {
+    setInput(initialState);
+    cancelPrev();
   };
 
   const onHandleSubmit = async () => {
@@ -114,7 +119,7 @@ const FormPost = ({ navigation, photo }) => {
       </TouchableOpacity>
       <TouchableOpacity
         style={styles.clear_conteiner}
-        onPress={() => setInput(initialState)}
+        onPress={hanldeClearSubmit}
       >
         <FontAwesome name="trash-o" size={24} color="#BDBDBD" />
       </TouchableOpacity>
@@ -128,7 +133,8 @@ const styles = StyleSheet.create({
   form: {
     marginHorizontal: 16,
     flexDirection: "column",
-    marginTop: 48,
+    marginTop: 30,
+    paddingBottom: 20,
   },
   input: {
     fontFamily: "Silvana-1",

@@ -30,7 +30,19 @@ const HomeScreen = ({ navigation, route }) => {
   return (
     <View style={styles.conteiner}>
       <View style={styles.profile_conteiner}>
-        <Image style={styles.image} source={{ uri: userPhoto }} />
+        {userPhoto ? (
+          <Image style={styles.image} source={{ uri: userPhoto }} />
+        ) : (
+          <View
+            style={{
+              backgroundColor: "#F6F6F6",
+              borderRadius: 16,
+              width: 60,
+              height: 60,
+            }}
+          ></View>
+        )}
+
         <View style={{ marginLeft: 8 }}>
           <Text style={styles.name}>{name}</Text>
           <Text style={styles.email}>{email}</Text>

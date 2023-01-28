@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useReducer } from "react";
 import { useDispatch } from "react-redux";
 // icons
 
@@ -30,11 +30,28 @@ const initialState = {
   password: "",
 };
 
+const reducerInput = (state, actions) => {
+  switch (actions.type) {
+    case "Name": {
+      return { ...state, name: actions.payload };
+    }
+    case "Email": {
+      return { ...state, email: actions.payload };
+    }
+    case "Password": {
+      return { ...state, password: actions.payload };
+    }
+    default: {
+      return state;
+    }
+  }
+};
+
 const RegistrationsScreen = ({ navigation }) => {
   const [isShowKeyboard, setIsShowKeyboard] = useState(false);
   const [image, setImage] = useState(null);
   const [input, setInput] = useState(initialState);
-
+  const [state, onDispatch] = useReducer(reducerInput, initialState);
   const dispatch = useDispatch();
 
   const [dimension, setDimension] = useState(
@@ -97,11 +114,18 @@ const RegistrationsScreen = ({ navigation }) => {
                 <TextInput
                   style={{
                     ...styles.input,
-                    borderColor: isShowKeyboard ? "#FF6C00" : "#e8e8e8",
+                    borderColor: state.name ? "#FF6C00" : "#e8e8e8",
                   }}
-                  placeholder="Name"
-                  onFocus={() => setIsShowKeyboard(true)}
+                  placeholder={state.name === true ? "" : "Name"}
+                  onBlur={() => {
+                    onDispatch({ type: "Name", payload: false });
+                  }}
+                  secureTextEntry={true}
                   value={input.name}
+                  onFocus={() => {
+                    onDispatch({ type: "Name", payload: true });
+                    setIsShowKeyboard(true);
+                  }}
                   onChangeText={(value) =>
                     setInput((prev) => ({ ...prev, name: value }))
                   }
@@ -111,26 +135,40 @@ const RegistrationsScreen = ({ navigation }) => {
                 <TextInput
                   style={{
                     ...styles.input,
-                    borderColor: isShowKeyboard ? "#FF6C00" : "#e8e8e8",
+                    borderColor: state.email ? "#FF6C00" : "#e8e8e8",
                   }}
-                  placeholder="Email or Phone"
-                  onFocus={() => setIsShowKeyboard(true)}
+                  placeholder={state.email ? "" : "Email"}
+                  onBlur={() => {
+                    onDispatch({ type: "Email", payload: false });
+                  }}
+                  secureTextEntry={true}
                   value={input.email}
+                  onFocus={() => {
+                    onDispatch({ type: "Email", payload: true });
+                    setIsShowKeyboard(true);
+                  }}
                   onChangeText={(value) =>
                     setInput((prev) => ({ ...prev, email: value }))
                   }
                 />
               </View>
+
               <View>
                 <TextInput
                   style={{
                     ...styles.input,
-                    borderColor: isShowKeyboard ? "#FF6C00" : "#e8e8e8",
+                    borderColor: state.password ? "#FF6C00" : "#e8e8e8",
                   }}
-                  placeholder="Password"
+                  placeholder={state.password ? "" : "Password"}
+                  onBlur={() => {
+                    onDispatch({ type: "Password", payload: false });
+                  }}
                   secureTextEntry={true}
                   value={input.password}
-                  onFocus={() => setIsShowKeyboard(true)}
+                  onFocus={() => {
+                    onDispatch({ type: "Password", payload: true });
+                    setIsShowKeyboard(true);
+                  }}
                   onChangeText={(value) =>
                     setInput((prev) => ({ ...prev, password: value }))
                   }

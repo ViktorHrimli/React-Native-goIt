@@ -1,11 +1,10 @@
-import React from "react";
+import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 
 import { Ionicons } from "@expo/vector-icons";
 import { AntDesign } from "@expo/vector-icons";
-import { Feather } from "@expo/vector-icons";
 
-import { TouchableOpacity, View, Text } from "react-native";
+import { TouchableOpacity, View, Text, Dimensions } from "react-native";
 
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 
@@ -16,11 +15,15 @@ import CommentsScreen from "../Screens/nestedSreens/CommentsScreen";
 import PostsScreen from "../Screens/mainScreens/PostsScreen";
 import ProfileScreen from "../Screens/mainScreens/ProfileScreen";
 
+import { TabHederLogOut } from "../components/ReUseComponents/tabHeaderNav/TabHeaderNavLogOut";
+import { TabHeaderNavBack } from "../components/ReUseComponents/tabHeaderNav/TabHeaderNavBack";
+
 import { authSignOut } from "../redux/auth/authOperations";
 
 const MainTabs = createBottomTabNavigator();
 
 const MainTabsNav = () => {
+  const [width, setWidth] = useState(Dimensions.get("window").width);
   const dispatch = useDispatch();
 
   const handleLogOut = () => {
@@ -29,67 +32,58 @@ const MainTabsNav = () => {
 
   return (
     <MainTabs.Navigator
-      screenOptions={{
+      backBehavior="history"
+      screenOptions={({ navigation, route }) => ({
         headerShown: true,
         headerTitleAlign: "center",
         tabBarShowLabel: false,
-        tabBarActiveBackgroundColor: "#FF6C00",
-        tabBarInactiveTintColor: "#000",
-        tabBarActiveTintColor: "#fff",
+        animationEnabled: true,
+        swipeEnabled: true,
         tabBarHideOnKeyboard: true,
-      }}
+        tabBarActiveBackgroundColor: "#FF6C00",
+        tabBarInactiveBackgroundColor: "transparent",
+        tabBarActiveTintColor: "#fff",
+        tabBarInactiveTintColor: "#000",
+        tabBarStyle: {
+          paddingBottom: 22,
+          paddingHorizontal: 40,
+          paddingTop: 10,
+          height: 60,
+        },
+        tabBarItemStyle: { borderRadius: 50, height: 40 },
+      })}
     >
       <MainTabs.Screen
         name="Home"
         component={HomeScreen}
-        options={{
-          headerRight: () => (
-            <View
-              style={{
-                paddingRight: 20,
-              }}
-            >
-              <TouchableOpacity onPress={handleLogOut}>
-                <Feather name="log-out" size={24} color="black" />
-              </TouchableOpacity>
-            </View>
-          ),
+        options={() => ({
+          headerRight: () => <TabHederLogOut onLogOut={handleLogOut} />,
           title: "Publications",
           headerRightContainerStyle: true,
-          tabBarIcon: (focused, size, color) => {
-            return <AntDesign name="appstore-o" size={24} color={color} />;
-          },
-        }}
+          tabBarIcon: ({ color }) => (
+            <AntDesign name="appstore-o" size={24} color={color} />
+          ),
+        })}
       />
       <MainTabs.Screen
         name="Post"
         component={PostsScreen}
-        options={{
-          headerLeft: () => (
-            <View
-              style={{
-                paddingLeft: 20,
-              }}
-            >
-              <TouchableOpacity onPress={() => "asd"}>
-                <Ionicons name="arrow-back-outline" size={24} color="black" />
-              </TouchableOpacity>
-            </View>
-          ),
+        options={() => ({
+          headerLeft: () => <TabHeaderNavBack />,
           title: "Create publications",
-          tabBarIcon: (focused, size, color) => {
+          tabBarIcon: ({ color }) => {
             return <Ionicons name="md-add-outline" size={23} color={color} />;
           },
-        }}
+        })}
       />
       <MainTabs.Screen
         name="Profile"
         component={ProfileScreen}
         options={{
           header: () => {},
-          tabBarIcon: (focused, size, color) => {
+          tabBarIcon: ({ color }) => {
             return (
-              <Ionicons name="md-person-outline" size={24} color="black" />
+              <Ionicons name="md-person-outline" size={24} color={color} />
             );
           },
         }}
@@ -97,45 +91,22 @@ const MainTabsNav = () => {
       <MainTabs.Screen
         name="Comment"
         component={CommentsScreen}
-        options={{
+        options={({ navigation }) => ({
           title: "Comment Screen",
-          headerLeft: () => (
-            <View
-              style={{
-                paddingLeft: 20,
-              }}
-            >
-              <TouchableOpacity onPress={() => console.log()}>
-                <Ionicons name="arrow-back-outline" size={24} color="black" />
-              </TouchableOpacity>
-            </View>
-          ),
-          tabBarHideOnKeyboard: true,
+          headerLeft: () => <TabHeaderNavBack navigation={navigation} />,
           tabBarIcon: () => {},
           tabBarButton: () => {},
-        }}
+        })}
       />
       <MainTabs.Screen
         name="Map"
         component={MapScreen}
-        options={{
+        options={({ navigation }) => ({
           title: "Map Screen",
-          headerLeft: () => (
-            <View
-              style={{
-                paddingLeft: 20,
-              }}
-            >
-              <TouchableOpacity
-                onPress={() => console.log("Return me back pls")}
-              >
-                <Ionicons name="arrow-back-outline" size={24} color="black" />
-              </TouchableOpacity>
-            </View>
-          ),
+          headerLeft: () => <TabHeaderNavBack navigation={navigation} />,
           tabBarIcon: (focused, color, size) => {},
           tabBarButton: () => {},
-        }}
+        })}
       />
     </MainTabs.Navigator>
   );
