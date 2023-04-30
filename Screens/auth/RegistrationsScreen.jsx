@@ -19,7 +19,12 @@ import {
 import { styles } from "./Reg.styled";
 
 import { authSignUp } from "../../redux/auth/authOperations";
-import { validateName, validateEmail, validationPassword } from "../../helpers";
+import {
+  validateName,
+  validateEmail,
+  validationPassword,
+  reducerInput,
+} from "../../helpers";
 // components
 
 import { AddButtonPhoto } from "../../components/ReUseComponents/AddRemoveButtonPhoto/AddPhoto";
@@ -32,31 +37,18 @@ const initialState = {
   password: "",
 };
 
-const reducerInput = (state, actions) => {
-  switch (actions.type) {
-    case "Name": {
-      return { ...state, name: actions.payload };
-    }
-    case "Email": {
-      return { ...state, email: actions.payload };
-    }
-    case "Password": {
-      return { ...state, password: actions.payload };
-    }
-    default: {
-      return state;
-    }
-  }
-};
-
 const RegistrationsScreen = ({ navigation }) => {
   const [isShowKeyboard, setIsShowKeyboard] = useState(false);
+
   const [input, setInput] = useState(initialState);
   const [image, setImage] = useState(null);
+
   const [isValidName, setIsValidName] = useState(true);
   const [isValidEmail, setIsValidEmail] = useState(true);
   const [isValidPassword, setIsValidPassword] = useState(true);
+
   const [state, onDispatch] = useReducer(reducerInput, initialState);
+
   const dispatch = useDispatch();
 
   const [dimension, setDimension] = useState(
@@ -120,34 +112,39 @@ const RegistrationsScreen = ({ navigation }) => {
             behavior={Platform.OS === "ios" ? "padding" : "height"}
           >
             <View style={{ ...styles.form, width: dimension - 20 * 2 }}>
-              <View>
-                <TextInput
-                  style={{
-                    ...styles.input,
-                    borderColor: state.name ? "#FF6C00" : "#e8e8e8",
-                  }}
-                  placeholder={"Name"}
-                  onBlur={() => {
-                    onDispatch({ type: "Name", payload: false });
-                  }}
-                  value={input.name}
-                  onFocus={() => {
-                    onDispatch({ type: "Name", payload: true });
-                    setIsShowKeyboard(true);
-                  }}
-                  onChangeText={(value) => {
-                    validateName(value, setIsValidName);
-                    setInput((prev) => ({ ...prev, name: value }));
-                  }}
-                />
+              {["Name", "Email", "Password"].map((item) => {
+                return (
+                  <View>
+                    <TextInput
+                      style={{
+                        ...styles.input,
+                        borderColor: state.name ? "#FF6C00" : "#e8e8e8",
+                      }}
+                      placeholder={item}
+                      onBlur={() => {
+                        onDispatch({ type: item, payload: false });
+                      }}
+                      value={input.name}
+                      onFocus={() => {
+                        onDispatch({ type: item, payload: true });
+                        setIsShowKeyboard(true);
+                      }}
+                      onChangeText={(value) => {
+                        validateName(value, setIsValidName);
+                        setInput((prev) => ({ ...prev, item: value }));
+                      }}
+                    />
 
-                {!isValidName ? (
-                  <ErrorText text="Name is required and at least 8 characters!" />
-                ) : (
-                  ""
-                )}
-              </View>
-              <View>
+                    {!isValidName ? (
+                      <ErrorText text="Name is required and at least 8 characters!" />
+                    ) : (
+                      ""
+                    )}
+                  </View>
+                );
+              })}
+
+              {/* <View>
                 <TextInput
                   style={{
                     ...styles.input,
@@ -197,7 +194,7 @@ const RegistrationsScreen = ({ navigation }) => {
                 ) : (
                   ""
                 )}
-              </View>
+              </View> */}
               <TouchableOpacity
                 touchSoundDisabled={true}
                 disabled={!isValidPassword}

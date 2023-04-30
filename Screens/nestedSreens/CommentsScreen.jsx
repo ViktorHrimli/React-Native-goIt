@@ -60,6 +60,7 @@ const CommentsScreen = ({ route }) => {
       });
     });
   }, [refresh, route.params]);
+
   return (
     <View style={styles.conteiner}>
       <FlatList
