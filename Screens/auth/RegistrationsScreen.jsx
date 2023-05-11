@@ -112,39 +112,35 @@ const RegistrationsScreen = ({ navigation }) => {
             behavior={Platform.OS === "ios" ? "padding" : "height"}
           >
             <View style={{ ...styles.form, width: dimension - 20 * 2 }}>
-              {["Name", "Email", "Password"].map((item) => {
-                return (
-                  <View>
-                    <TextInput
-                      style={{
-                        ...styles.input,
-                        borderColor: state.name ? "#FF6C00" : "#e8e8e8",
-                      }}
-                      placeholder={item}
-                      onBlur={() => {
-                        onDispatch({ type: item, payload: false });
-                      }}
-                      value={input.name}
-                      onFocus={() => {
-                        onDispatch({ type: item, payload: true });
-                        setIsShowKeyboard(true);
-                      }}
-                      onChangeText={(value) => {
-                        validateName(value, setIsValidName);
-                        setInput((prev) => ({ ...prev, item: value }));
-                      }}
-                    />
+              <View>
+                <TextInput
+                  style={{
+                    ...styles.input,
+                    borderColor: state.name ? "#FF6C00" : "#e8e8e8",
+                  }}
+                  placeholder="Name"
+                  onBlur={() => {
+                    onDispatch({ type: "name", payload: false });
+                  }}
+                  value={input.name}
+                  onFocus={() => {
+                    onDispatch({ type: "name", payload: true });
+                    setIsShowKeyboard(true);
+                  }}
+                  onChangeText={(value) => {
+                    validateName(value, setIsValidName);
+                    setInput((prev) => ({ ...prev, name: value }));
+                  }}
+                />
 
-                    {!isValidName ? (
-                      <ErrorText text="Name is required and at least 8 characters!" />
-                    ) : (
-                      ""
-                    )}
-                  </View>
-                );
-              })}
+                {!isValidName ? (
+                  <ErrorText text="Name is required and at least 8 characters!" />
+                ) : (
+                  ""
+                )}
+              </View>
 
-              {/* <View>
+              <View>
                 <TextInput
                   style={{
                     ...styles.input,
@@ -194,7 +190,7 @@ const RegistrationsScreen = ({ navigation }) => {
                 ) : (
                   ""
                 )}
-              </View> */}
+              </View>
               <TouchableOpacity
                 touchSoundDisabled={true}
                 disabled={!isValidPassword}

@@ -14,7 +14,7 @@ const AddButtonPhoto = ({ setImage }) => {
   const onClickAdd = async () => {
     const refPhoto = await uploadPhonoInStorage(await getImageFromGallery());
     setImage(refPhoto);
-    // dispatch(authUpdateProfile(refPhoto));
+    dispatch(authUpdateProfile(refPhoto));
   };
   return (
     <View style={{ position: "absolute", zIndex: 200, right: -14, bottom: 15 }}>
