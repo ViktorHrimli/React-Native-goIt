@@ -19,6 +19,8 @@ import {
 import { styles } from "./Reg.styled";
 
 import { authSignUp } from "../../redux/auth/authOperations";
+import { SignInUser } from "../../api/auth/signin";
+
 import {
   validateName,
   validateEmail,
@@ -36,6 +38,8 @@ const initialState = {
   email: "",
   password: "",
 };
+
+const initSignInUser = new SignInUser();
 
 const RegistrationsScreen = ({ navigation }) => {
   const [isShowKeyboard, setIsShowKeyboard] = useState(false);
@@ -59,8 +63,12 @@ const RegistrationsScreen = ({ navigation }) => {
     if (isValidName && isValidEmail && isValidPassword && input.email) {
       Keyboard.dismiss();
       setIsShowKeyboard(false);
+      // firebase dispatch
+      // dispatch(authSignUp({ ...input, photo: image }));
+      // firebase dispatch
 
-      dispatch(authSignUp({ ...input, photo: image }));
+      initSignInUser.createUser({ ...input });
+
       setInput(() => initialState);
     } else {
       console.log("empty field");
