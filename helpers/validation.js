@@ -1,3 +1,10 @@
+const shemaRegex = {
+  password:
+    /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*()_+])[0-9a-zA-Z!@#$%^&*()_+]{8,}$/,
+  email: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+  username: /^[a-zA-Z0-9]+$/,
+};
+
 const validateName = (value, setIsValid) => {
   if (value.trim().length > 2) {
     setIsValid(true);
@@ -7,7 +14,7 @@ const validateName = (value, setIsValid) => {
 };
 
 const validateEmail = (text, setIsValidEmail) => {
-  const emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+  const emailRegex = shemaRegex.email;
   if (emailRegex.test(text)) {
     setIsValidEmail(true);
   } else {
@@ -16,8 +23,7 @@ const validateEmail = (text, setIsValidEmail) => {
 };
 
 const validationPassword = (password, setIsValidPassword) => {
-  const passwordRegex =
-    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+  const passwordRegex = shemaRegex.password;
   if (passwordRegex.test(password)) {
     setIsValidPassword(true);
   } else {

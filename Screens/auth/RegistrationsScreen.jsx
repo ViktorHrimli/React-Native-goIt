@@ -34,7 +34,7 @@ import { RemoveButtonPhoto } from "../../components/ReUseComponents/AddRemoveBut
 import { ErrorText } from "../../components/ReUseComponents/ErrorText/ErrorText";
 
 const initialState = {
-  name: "",
+  username: "",
   email: "",
   password: "",
 };
@@ -67,7 +67,7 @@ const RegistrationsScreen = ({ navigation }) => {
       // dispatch(authSignUp({ ...input, photo: image }));
       // firebase dispatch
 
-      initSignInUser.createUser({ ...input });
+      initSignInUser.createUser({ ...input, photo: image });
 
       setInput(() => initialState);
     } else {
@@ -124,20 +124,20 @@ const RegistrationsScreen = ({ navigation }) => {
                 <TextInput
                   style={{
                     ...styles.input,
-                    borderColor: state.name ? "#FF6C00" : "#e8e8e8",
+                    borderColor: state.username ? "#FF6C00" : "#e8e8e8",
                   }}
-                  placeholder="Name"
+                  placeholder="Username"
                   onBlur={() => {
-                    onDispatch({ type: "name", payload: false });
+                    onDispatch({ type: "username", payload: false });
                   }}
-                  value={input.name}
+                  value={input.username}
                   onFocus={() => {
-                    onDispatch({ type: "name", payload: true });
+                    onDispatch({ type: "username", payload: true });
                     setIsShowKeyboard(true);
                   }}
                   onChangeText={(value) => {
                     validateName(value, setIsValidName);
-                    setInput((prev) => ({ ...prev, name: value }));
+                    setInput((prev) => ({ ...prev, username: value }));
                   }}
                 />
 

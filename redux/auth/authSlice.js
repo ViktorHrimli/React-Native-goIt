@@ -6,6 +6,7 @@ const initialState = {
   stateChange: null,
   email: null,
   photo: null,
+  token: null,
 };
 
 const authSlice = createSlice({

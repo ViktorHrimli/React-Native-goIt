@@ -8,7 +8,12 @@ import {
 
 import { auth } from "../../FireBase";
 
-import { saveUserProfile, stateChangeUser, logOutUser } from "./authSlice";
+import {
+  saveUserProfile,
+  stateChangeUser,
+  logOutUser,
+  updateUserPhoto,
+} from "./authSlice";
 // REGISTR
 const authSignUp =
   ({ email, password, name, photo }) =>
