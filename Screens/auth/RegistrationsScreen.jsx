@@ -17,9 +17,13 @@ import {
 } from "react-native";
 
 import { styles } from "./Reg.styled";
-
-import { authSignUp } from "../../redux/auth/authOperations";
+// FIREBASE
+// import { authSignUp } from "../../redux/auth/authOperations";
+// FIREBASE
+// API
 import { SignInUser } from "../../api/auth/signin";
+import { saveUserProfile, stateChangeUser } from "../../redux/auth/authSlice";
+// API
 
 import {
   validateName,
@@ -63,11 +67,27 @@ const RegistrationsScreen = ({ navigation }) => {
     if (isValidName && isValidEmail && isValidPassword && input.email) {
       Keyboard.dismiss();
       setIsShowKeyboard(false);
-      // firebase dispatch
+      // firebase actions
       // dispatch(authSignUp({ ...input, photo: image }));
-      // firebase dispatch
+      // firebase actions
 
-      initSignInUser.createUser({ ...input, photo: image });
+      // api actions
+      initSignInUser
+        .createUser({ ...input, photo: image })
+        .then(
+          ({
+            username: displayName,
+            id: uid,
+            email,
+            avatarUrl: photoURL,
+            token,
+          }) => {
+            dispatch(
+              saveUserProfile({ displayName, uid, email, photoURL, token })
+            );
+          }
+        );
+      // api actions
 
       setInput(() => initialState);
     } else {

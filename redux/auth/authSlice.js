@@ -19,6 +19,7 @@ const authSlice = createSlice({
       name: payload.displayName,
       email: payload.email,
       photo: payload.photoURL,
+      token: payload.token,
     }),
     updateUserPhoto: (state, { payload }) => ({
       ...state,

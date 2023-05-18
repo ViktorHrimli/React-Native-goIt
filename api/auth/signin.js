@@ -1,14 +1,17 @@
 import axios from "axios";
 
-import { saveUserProfile } from "../../redux/auth/authSlice";
-
 class SignInUser {
   async createUser(input) {
     try {
-      await axios
+      return await axios
         .post("http://192.168.1.107:5000/api/signin", input)
-        .then(({ data }) => console.log(data))
-        .catch((e) => console.log(e));
+        .then(({ data }) => {
+          return {
+            ...data.data,
+            token: data.token,
+          };
+        })
+        .catch((e) => Error(e.message));
     } catch (error) {
       console.log(error.message);
     }

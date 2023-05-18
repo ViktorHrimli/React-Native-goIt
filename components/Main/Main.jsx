@@ -8,10 +8,11 @@ import { authStateChanged } from "../../redux/auth/authOperations";
 
 const Main = () => {
   const dispatch = useDispatch();
-  const state = useSelector((state) => state.verify.stateChange);
+  const state = useSelector((state) => state.verify.token);
 
   const routing = useRouting(state);
 
+  console.log(state);
   useEffect(() => {
     dispatch(authStateChanged());
   }, []);
